@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../assets/usercss/signup.css";
 import axios from "axios";
 import bglogin from "../assets/img/banner-bg.jpg";
@@ -7,8 +7,11 @@ function login() {
   const [input1, setinput1] = useState("");
   const [input2, setinput2] = useState("");
   const [invalid, setinvalid] = useState("");
-
+  const [userId, setUserId] = useState("");
+   const [list,setlist] = useState("");
   function Login() {
+
+    
     if (input1 === "" && input2 === "") {
       setinvalid("Enter email or password");
     } else {
@@ -20,10 +23,14 @@ function login() {
         .post("http://localhost:2000/userroute/login", userdata)
         .then((response) => {
           if (response.status === 200) {
-            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("usertoken", response.data.usertoken);
             localStorage.setItem("userProfile", JSON.stringify(response.data.user));
+
+            setUserId(response.data.user.id)
+            packagecheck(response.data.user.id);
+            
           }
-          console.log(response.data);
+
           window.location.href = "/home";
           alert("successfully logged in");
         })
@@ -34,6 +41,34 @@ function login() {
         });
     }
   }
+
+
+
+  // useEffect(()=>{
+  // },[userId]);
+ 
+
+const packagecheck = async(userId) =>{
+  try{
+    const response = await axios.get(`http://localhost:2000/userroute/packagecheking/${userId}`)
+    setlist(response.data.data)
+
+    const appliedPackage = {
+      packageId: response.data.data._id,
+      packageName: response.data.data.membershiptype,
+      duration: response.data.data.duration,
+      monthlyFee: response.data.data.monthlyfee,
+      enrollmentFee: response.data.data.onetimeentrollmentfee,
+      status: response.data.data.status,
+    };
+    localStorage.setItem("appliedPackage", JSON.stringify(appliedPackage));
+  }catch(err){
+    console.log(err);
+  }
+
+} 
+
+
 
   return (
     <div className="main_sec" style={{ backgroundImage: `url(${bglogin})` }}>

@@ -9,13 +9,13 @@ import SoftTypography from "components/SoftTypography";
 function signup() {
   const [username, setusername] = useState("");
   const [email, setemail] = useState("");
-  const [ homeaddress , sethomeaddress] = useState("");
   const [city, setcity] = useState("");
   const [country, setcountry] = useState("");
   const [ pin,setpin] = useState("");
   const [phonenumber, setphonenumber] = useState("");
   const [password, setpassword] = useState("");
   const [location, setlocation] = useState("");
+  const [ type,settype] = useState("Not Subscribed");
 
   const [input1, setinput1] = useState("");
   const [input2, setinput2] = useState("");
@@ -32,26 +32,10 @@ function signup() {
     e.preventDefault();
     const token = localStorage.getItem("token");
     axios.defaults.headers.common["Authorization"] = token;
-    const validationErrors = [];
-    // const signupdata = {
-    //   username: username,
-    //   email: email,
-    //   phonenumber: phonenumber,
-    //   password: password,
-    //   location: location,
-    // };
-    // axios
-    //   .post("http://localhost:2000/userroute/signup", signupdata)
-    //   .then((response) => {
-    //     console.log("singnupdata successfully posted", response.data);
-    //     alert("successfully posted");
-    //     window.location.href = "/login";
-    //   })
-    //   .catch((error) => {
-    //     console.log("error posting", error);
-    //     window.location.href = "/signup";
-    //   });
 
+
+    const validationErrors = [];
+ 
     if (!username) {
       setinput1("Enter a username");
       validationErrors.push("Username is required");
@@ -128,12 +112,12 @@ if(validationErrors.length === 0){
     city: city,
     pin: pin,
     country: country,
+    type: type,
  
   };
   axios
     .post("http://localhost:2000/userroute/signup", signupdata)
     .then((response) => {
-      console.log("singnupdata successfully posted", response.data);
       alert("successfully posted");
       window.location.href = "/login";
       setinvalid("")

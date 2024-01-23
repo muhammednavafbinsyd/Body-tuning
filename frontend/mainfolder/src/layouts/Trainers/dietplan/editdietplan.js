@@ -12,10 +12,8 @@ import { Row, Col } from "react-bootstrap";
 
 function Editworkoutplan() {
   const { id } = useParams();
-  // const [id,setid] = useState('')
   const [eid, seteid] = useState("");
 
-  // console.log(id);
   const location = useLocation();
   const state = location.state;
 
@@ -37,41 +35,38 @@ function Editworkoutplan() {
     day5: "",
     day6: "",
     day7: "",
+    type:""
   });
 
-  //const [logState, setLogState] = useState(workoutedit);
 
   useEffect(() => {
     if (state) {
       seteid(state.id);
     }
     geteditworkoutplan();
+    typeofplan();
   }, [state, id]);
 
   const geteditworkoutplan = useCallback(async () => {
-    console.log("ccccccccc", id);
     const token = localStorage.getItem("token");
     axios.defaults.headers.common["Authorization"] = token;
     try {
       const response = await axios.get(`http://localhost:2000/adminroute/editdietplan/${id}`);
       const data = response.data;
       setdietedit(data);
-      console.log("78", data);
     } catch (err) {
       console.log(err);
     }
   }, [eid]);
 
-  // useEffect(()=>{
 
-  // },[id])
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    console.log("55555555555555", eid);
 
     const formData = {
       trainerId: id,
+      type:dietedit.type,
       title: dietedit.title,
       day1: dietedit.day1,
       day2: dietedit.day2,
@@ -82,31 +77,15 @@ function Editworkoutplan() {
       day7: dietedit.day7,
     };
 
-    // const formData = new FormData();
-    // formData.append("trainerId", id);
-    // formData.append("title", workoutedit.title);
-    // formData.append("day1", workoutedit.day1);
-    // formData.append("day2", workoutedit.day2);
-    // formData.append("day3", workoutedit.day3);
-    // formData.append("day4", workoutedit.day4);
-    // formData.append("day5", workoutedit.day5);
-    // formData.append("day6", workoutedit.day6);
-    // formData.append("day7", workoutedit.day7);
-
-    // console.log("ddddddd",workoutdata);
     const token = localStorage.getItem("token");
     axios.defaults.headers.common["Authorization"] = token;
 
     axios
       .put(`http://localhost:2000/adminroute/updatedietplan/${id}`, formData, {
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        // },
+  
       })
       .then((response) => {
-        console.log(response.data);
         if (response.status === 200) {
-          console.log("dietplan plan updated successfully");
           window.location.href = `/dietplan/${eid}`;
         }
       })
@@ -122,8 +101,25 @@ function Editworkoutplan() {
       [editorName]: content,
     }));
   };
+  const handleTypeChange = (e) => {
+    const selectedType = e.target.value;
+    setdietedit((prevdietEdit) => ({
+      ...prevdietEdit,
+      type: selectedType,
+    }));
+  };
 
-  //console.log("1212121212121212",workoutedit);
+  const typeofplan = async () => {
+    const token = localStorage.getItem("token");
+    axios.defaults.headers.common["Authorization"] = token;
+    try {
+      const response = await axios.get("http://localhost:2000/adminroute/plantypeGet");
+      settype(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const [type,settype]= useState([])
 
   const quillStyle = {
     display: "block",
@@ -154,8 +150,6 @@ function Editworkoutplan() {
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
     input.onchange = (event) => {
-      // Handle file selection here
-      console.log(URL.createObjectURL(event.target.files[0]));
       return URL.createObjectURL(event.target.files[0]);
     };
     input.click();
@@ -220,6 +214,11 @@ function Editworkoutplan() {
   return (
     <BasicLayout>
       <Row>
+        <select name="type" value={dietedit.type} id="Active-Deactive" onChange={handleTypeChange}>
+              {type.map((item, index) => (
+                <option value={item._id} key={index}>{item.type}</option>
+              ))}
+            </select>
         <Col>
           <SoftBox mb={3}>
             <label>Title</label>

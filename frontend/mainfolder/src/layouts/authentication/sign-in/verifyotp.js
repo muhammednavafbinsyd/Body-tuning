@@ -48,8 +48,6 @@ const Verifyotps = (e)=>{
    axios.post("http://localhost:2000/adminroute/verifyotp",{otp})
    .then((response)=>{
     if(response.status === 200){
-    console.log(response.data.success);
-    console.log("Success");
     alert("Verified")
     window.location.href = "/setpassword"
     }

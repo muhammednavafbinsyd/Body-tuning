@@ -3,6 +3,7 @@ import Navbar from "./Navbar";
 import "../assets/usercss/style.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Bgimage from "../assets/img/banner-bg.jpg"
 
 function Changepassword(){
 
@@ -57,7 +58,6 @@ function Changepassword(){
         .post(`http://localhost:2000/userroute/changepassword/${Profile.id}`, datas)
 
         .then((response) => {
-          console.log("password change successful", response.data);
           navigate("/userprofile");
         })
 
@@ -84,12 +84,12 @@ function Changepassword(){
   };
 
   return (
-    <div>
+    <div style={{ backgroundImage: `url(${Bgimage})` }}   >
       <Navbar />
-      <div className="mainDiv">
+      <div className="mainDiv" style={{ backgroundImage: `url(${Bgimage})` }}   >
         <div className="cardStyle">
    
-            <img src id="signupLogo" />
+            
             <h2 className="formTitle">Change your password</h2>
             <div className="inputDiv">
               <label className="inputLabel" htmlFor="password">

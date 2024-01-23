@@ -138,7 +138,9 @@ const [inavalid,setinvalid] = useState("");
       );
       window.location.href = "/userprofile";
       localStorage.setItem("userProfile", JSON.stringify(response.data.userProfile));
-      console.log(response.data);
+
+
+
       setinvalid("")
       alert(data, "successfully updated userProfile ");
       
@@ -168,7 +170,7 @@ const [inavalid,setinvalid] = useState("");
           </div>
         </div>
       </header>
-      <section>
+      <section   className="ScriptSection"  >
         <div className="rt-container">
           <div className="col-rt-12">
             <div className="Scriptcontent">
@@ -277,34 +279,15 @@ const [inavalid,setinvalid] = useState("");
                           </SoftBox>
                         </div>
                       </div>
-                      <div style={{ height: 26 }} />
-                      <div className="card shadow-sm">
-                        <div className="card-header bg-transparent border-0">
-                          <h3 className="mb-0">
-                            <i className="far fa-clone pr-1" />
-                            Other Information
-                          </h3>
-                        </div>
-                        <div className="card-body pt-0">
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                            veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                            commodo consequat.
-                          </p>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              {/* partial */}
             </div>
           </div>
         </div>
       </section>
     
-      {/* Analytics */}
       <Footer/>
     </div>
   );

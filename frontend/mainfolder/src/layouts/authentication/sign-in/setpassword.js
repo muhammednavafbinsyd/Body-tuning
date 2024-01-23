@@ -24,8 +24,7 @@ function Setpassword() {
       .post("http://localhost:2000/adminroute/newpassword", data)
       .then((response) => {
         if (response.status === 200) {
-          console.log(response.data, email);
-          console.log(response.data.success);
+    
           alert(response.data.success, "success ");
           localStorage.removeItem("email");
           window.location.href = "/";

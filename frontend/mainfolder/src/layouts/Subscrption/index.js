@@ -78,11 +78,9 @@ function Tables() {
       onetimeentrollmentfee: onetimeentrollmentfee,
       additionalbenefits: additionalbenefits,
     };
-    console.log(subdata);
     axios
       .post("http://localhost:2000/adminroute/subscriptioncreate", subdata)
       .then((response) => {
-        console.log("data posted successfully", response.data);
         handlecloseDialog();
         window.location.href = "/subscription";
       })

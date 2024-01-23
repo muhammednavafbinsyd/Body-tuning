@@ -13,24 +13,14 @@ import Card from "react-bootstrap/Card";
 
 function userProfile() {
   const [userProfile, setuserprofile] = useState("");
-  const [id, setId] = useState("");
   const [list, setList] = useState([]);
   const [packagelist, setpackagelist] = useState([]);
 
-  useEffect(() => {
-    const getinfo = JSON.parse(localStorage.getItem("userProfile")) || {};
-    setuserprofile(getinfo);
-    setId(getinfo.id);
-    Subscription(id);
-    packageGet();
-  }, [id]);
 
   const Subscription = async (id) => {
     try {
-      console.log("ppppppppppppppppppppppppppp");
       const response = await axios.get(`http://localhost:2000/userroute/packageIdget/${id}`);
       setList(response.data);
-      console.log(response.data, "gjhgjhgjhgjhgj");
     } catch (err) {
       console.log(err, "Error");
     }
@@ -45,17 +35,22 @@ function userProfile() {
     }
   };
 
+
+  useEffect(() => {
+    const getinfo = JSON.parse(localStorage.getItem("userProfile")) || {};
+    setuserprofile(getinfo);
+    const userId = getinfo.id; 
+    Subscription(userId);
+    packageGet();
+  }, []); 
+  
+
   return (
     <div className="body1">
       <Navbar />
       <header className="ScriptHeader">
         <div className="rt-container">
-          <div className="col-rt-12">
-            {/* <div className="rt-heading">
-        <h1>Student Profile Page Design Example</h1>
-        <p>A responsive student profile page design.</p>
-      </div> */}
-          </div>
+          <div className="col-rt-12"></div>
         </div>
       </header>
       <section className="ScriptSection">
@@ -145,55 +140,25 @@ function userProfile() {
                           </h3>
                         </div>
                         <div className=" container card-body pt-0">
-                          {/* {list.map((item, index) => (
-                            <div key={index}>
-                              <p>
-                                {
-                                  packagelist.find((listItem) => listItem._id === item.packageId)
-                                    ?.membershiptype
-                                }
-                              </p>
-                              <p>
-                                {
-                                  packagelist.find((listItem) => listItem._id === item.packageId)
-                                    ?.duration
-                                }
-                              </p>
-                              <p>
-                                {
-                                  packagelist.find((listItem) => listItem._id === item.packageId)
-                                    ?.monthlyfee
-                                }
-                              </p>
-                              <p>
-                                {
-                                  packagelist.find((listItem) => listItem._id === item.packageId)
-                                    ?.onetimeentrollmentfee
-                                }
-                              </p>
-                              <p>
-                                {
-                                  packagelist.find((listItem) => listItem._id === item.packageId)
-                                    ?.additionalbenefits
-                                }
-                              </p>
-                            </div>
-                          ))} */}
-                           <div className="row"  >
-                          {list &&(
-                            <div className="col-md-6 col-lg-6" >
-                          <Card style={{ width: "18rem" }}  >
-                            <Card.Body>
-                              <Card.Title> {
-                                  packagelist.find((listItem) => listItem._id === list.packageId)
-                                    ?.membershiptype
-                                }</Card.Title>
-                              <Card.Text></Card.Text>
-                            </Card.Body>
-                          </Card>
+                          <div className="row">
+                            {list && (
+                              <div className="col-md-6 col-lg-6">
+                                <Card style={{ width: "18rem" }}>
+                                  <Card.Body>
+                                    <Card.Title>
+                                      {
+                                        packagelist.find(
+                                          (listItem) => listItem._id === list.packageId
+                                        )?.membershiptype
+                                      }
+                  
+                                    </Card.Title>
+                                    <Card.Text></Card.Text>
+                                  </Card.Body>
+                                </Card>
+                              </div>
+                            )}
                           </div>
-                           )}
-                           </div>
                         </div>
                       </div>
                     </div>

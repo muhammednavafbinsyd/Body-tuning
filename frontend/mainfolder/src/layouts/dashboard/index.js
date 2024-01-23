@@ -33,18 +33,82 @@ import GradientLineChart from "examples/Charts/LineCharts/GradientLineChart";
 import typography from "assets/theme/base/typography";
 
 // Dashboard layout components
-import BuildByDevelopers from "layouts/dashboard/components/BuildByDevelopers";
-import WorkWithTheRockets from "layouts/dashboard/components/WorkWithTheRockets";
+// import BuildByDevelopers from "layouts/dashboard/components/BuildByDevelopers";
+// import WorkWithTheRockets from "layouts/dashboard/components/WorkWithTheRockets";
 import Projects from "layouts/dashboard/components/Projects";
 import OrderOverview from "layouts/dashboard/components/OrderOverview";
 
 // Data
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function Dashboard() {
   const { size } = typography;
-  const { chart, items } = reportsBarChartData;
+  const { chart, items } = reportsBarChartData();
+
+  const [totalUsers, setTotalUsers] = useState("");
+  const [totalsubscribedUsers, setTotalsubscribedUsers] = useState("");
+  const [totalWorkoutplan, seTotalWorkoutplan] = useState("");
+  const [totaldietplan, seTotaldietplan] = useState("");
+  const [ totalTrainers,setTotaltrainers] = useState("");
+console.log(chart);
+  useEffect(() => {
+    const fetchTotalUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:2000/adminroute/signupcount");
+        setTotalUsers(response.data.totalitems);
+      } catch (error) {
+        console.error("Error fetching total users count:", error);
+      }
+    };
+
+    const fetchTotalsubscribedUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:2000/adminroute/subscribedUsersCount");
+        setTotalsubscribedUsers(response.data.totalitems);
+      } catch (error) {
+        console.error("Error fetching total users count:", error);
+      }
+    };
+
+    const fetchTotalWorkoutplan = async () => {
+      try {
+        const response = await axios.get("http://localhost:2000/adminroute/totalworkoutplan");
+        seTotalWorkoutplan(response.data);
+      } catch (error) {
+        console.error("Error fetching total users count:", error);
+      }
+    };
+
+    const fetchDietPlancount = async () => {
+      try {
+        const response = await axios.get("http://localhost:2000/adminroute/totaldietplancount");
+        seTotaldietplan(response.data.totalitems);
+      } catch (error) {
+        console.error("Error fetching total users count:", error);
+      }
+    };
+    const fetchTrainerscount = async () => {
+      try {
+        const response = await axios.get("http://localhost:2000/adminroute/trainersCount");
+        setTotaltrainers(response.data);
+        
+      } catch (error) {
+        console.error("Error fetching total users count:", error);
+      }
+    };
+    fetchTrainerscount();
+    fetchDietPlancount();
+    fetchTotalWorkoutplan();
+    fetchTotalsubscribedUsers();
+    fetchTotalUsers();
+  }, []);
+
+  const currentYear = new Date().getFullYear();
+
+
 
   return (
     <DashboardLayout>
@@ -54,32 +118,43 @@ function Dashboard() {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "today's money" }}
-                count="$53,000"
+                title={{ text: "Customers" }}
+                count={totalUsers}
                 percentage={{ color: "success", text: "+55%" }}
                 icon={{ color: "info", component: "paid" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "today's users" }}
-                count="2,300"
+                title={{ text: "Subscribed customers" }}
+                count={totalsubscribedUsers}
                 percentage={{ color: "success", text: "+3%" }}
                 icon={{ color: "info", component: "public" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "new clients" }}
-                count="+3,462"
+                title={{ text: "Workouts" }}
+                count={totalWorkoutplan}
                 percentage={{ color: "error", text: "-2%" }}
                 icon={{ color: "info", component: "emoji_events" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "sales" }}
-                count="$103,430"
+                title={{ text: "Diets" }}
+                count={totaldietplan}
+                percentage={{ color: "success", text: "+5%" }}
+                icon={{
+                  color: "info",
+                  component: "shopping_cart",
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} xl={3}>
+              <MiniStatisticsCard
+                title={{ text: "Trainers" }}
+                count={totalTrainers}
                 percentage={{ color: "success", text: "+5%" }}
                 icon={{
                   color: "info",
@@ -92,10 +167,10 @@ function Dashboard() {
         <SoftBox mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={7}>
-              <BuildByDevelopers />
+              {/* <BuildByDevelopers /> */}
             </Grid>
             <Grid item xs={12} lg={5}>
-              <WorkWithTheRockets />
+              {/* <WorkWithTheRockets /> */}
             </Grid>
           </Grid>
         </SoftBox>
@@ -124,13 +199,13 @@ function Dashboard() {
                     <SoftTypography variant="button" color="text" fontWeight="medium">
                       4% more{" "}
                       <SoftTypography variant="button" color="text" fontWeight="regular">
-                        in 2021
+                        {currentYear}
                       </SoftTypography>
                     </SoftTypography>
                   </SoftBox>
                 }
                 height="20.25rem"
-                chart={gradientLineChartData}
+                chart={gradientLineChartData()}
               />
             </Grid>
           </Grid>

@@ -90,7 +90,6 @@ axios.post("http://localhost:2000/adminroute/testimonialPost",data,{
 
 })
 .then((response)=>{
-    console.log(response.data ,"success")
     if(response.status === 200){
     handleClose()
     window.location.href ="/testimonial"

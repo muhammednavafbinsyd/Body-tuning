@@ -18,9 +18,8 @@ function mysubscription() {
   const [id, setid] = useState("");
   const [list, setlist] = useState([]);
   const [packagelist, setpackagelist] = useState([]);
+  const [remaining, setremaining] = useState("");
 
-  console.log(packagelist,"my package list");
-  console.log(list, "kkkk");
 
   useEffect(() => {
     const getdata = JSON.parse(localStorage.getItem("userProfile")) || {};
@@ -33,8 +32,8 @@ function mysubscription() {
   const Subscription = async (id) => {
     try {
       const response = await axios.get(`http://localhost:2000/userroute/mysubscriptionList/${id}`);
-      setlist(response.data);
-      console.log(response.data, "hellelelel");
+      setlist(response.data.data);
+      setremaining(response.data.remainingDays);
     } catch (error) {
       console.log(error);
     }
@@ -55,26 +54,26 @@ function mysubscription() {
         id,
         pkid,
       };
-    
-      navigate(`/subscribepackage/${pkid}`,{state});
+
+      navigate(`/subscribepackage/${pkid}`, { state });
     } catch (err) {
       console.log(err);
     }
   };
-  
 
-  const stateID2 = (pkid2)=>{
-    try{
+  const stateID2 = (pkid2, pid) => {
+    try {
       const state = {
-        pkid2
+        pid,
+        pkid2,
       };
-      navigate("/subscribe",{state});
-    }catch(error){
-      console.log(error)
+      navigate("/subscribe", { state });
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
 
-
+  const anyActivePackageExists = list.some((item) => new Date(item.expiry_date) >= new Date());
 
   return (
     <div>
@@ -106,41 +105,13 @@ function mysubscription() {
                     <th>Monthly Fee</th>
                     <th>OTEF</th>
                     <th>Total Paid</th>
+                    <th>Type</th>
                     <th>Expire Date</th>
+                    <th>Status</th>
                     <th>Action</th>
+
                   </tr>
                 </thead>
-                {/* <tbody>
-                  {list.map((item, index) => (
-                    
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>
-                        {packagelist.find((listItem) => listItem._id === item.packageId)
-                          ?.membershiptype}
-                      </td>
-                      <td>
-                        {packagelist.find((listItem) => listItem._id === item.packageId)
-                          ?.duration}
-                      </td>
-                      <td>
-                        {packagelist.find((listItem) => listItem._id === item.packageId)
-                          ?.monthlyfee}
-                      </td>
-                      <td>
-                        {packagelist.find((listItem) => listItem._id === item.packageId)
-                          ?.onetimeentrollmentfee}
-                      </td>
-                      <td>
-                        {item.totalpaid}
-                      </td>
-                      <td>
-                      {new Date(item.expiry_date).toLocaleDateString()}
-                      </td>
-                      <td><Button>View</Button></td>
-                    </tr>
-                  ))}
-                </tbody> */}
 
                 <tbody>
                   {list.map((item, index) => {
@@ -150,6 +121,7 @@ function mysubscription() {
                     const anySubscriptionExpired = list.every(
                       (item) => new Date(item.expiry_date) < new Date()
                     );
+                    const isPackageActive = new Date(item.expiry_date) >= new Date();
                     return (
                       <tr key={index}>
                         <td>{index + 1}</td>
@@ -157,20 +129,31 @@ function mysubscription() {
                         <td>{packageItem?.duration}</td>
                         <td>{packageItem?.monthlyfee}</td>
                         <td>{packageItem?.onetimeentrollmentfee}</td>
-                        <td>{item.totalpaid}</td>
-                        <td>{new Date(item.expiry_date).toLocaleDateString()}</td>
-                        {/* Render buttons based on subscription status */}
+                        <td>{item.type === "upgrade" ? item.balanceAmount : item.totalpaid}</td>
+                        <td>{item.type}</td>
+                        <td>
+                          {new Date(item.expiry_date).toLocaleDateString()}
+                          {remaining===null ? (
+                            <p></p>
+                          ):(<p style={{ color: "red", fontSize: "10px" }}>Your pack expire in {remaining} days</p>)}
+                        </td>
+                        <td>{item.status}</td>
+
+           
                         <td>
                           {anySubscriptionExpired ? (
-                            <Button
-                             onClick={() => stateID(item.packageId)}
-                             >
-                              Renew
-                            </Button>
+                            <Button onClick={() => stateID(item.packageId)}>Renew</Button>
                           ) : (
-                            <Button component={Link} to={`/membershipview/${item._id}`}>View</Button>
+                            <Button component={Link} to={`/membershipview/${item._id}`}>
+                              View
+                            </Button>
                           )}
-                          <Button onClick={()=>stateID2(item.packageId)}>Upgrade</Button>
+                          {/* <Button onClick={()=>stateID2(item._id, item.packageId)}>Upgrade</Button> */}
+                          {isPackageActive && anyActivePackageExists && (
+                            <Button onClick={() => stateID2(item._id, item.packageId)}>
+                              Upgrade
+                            </Button>
+                          )}
                         </td>
                       </tr>
                     );

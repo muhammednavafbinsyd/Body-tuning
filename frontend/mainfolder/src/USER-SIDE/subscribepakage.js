@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, json, useLocation, useParams } from "react-router-dom";
+import { Link, json, useLocation, useNavigate, useParams } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./footer";
 import sbp from "../assets/img/pexels-victor-freitas-703014.jpg";
@@ -12,37 +12,103 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import SoftInput from "components/SoftInput";
-import { Label } from "@mui/icons-material";
+import RenderRazorpay from "./razorpayrender";
 
-function subscribepakage() {
+function Subscribepakage() {
+  // razorpay
+  const key_id = process.env.REACT_APP_RAZORPAY_KEY_ID;
+  const KeySecret = process.env.REACT_APP_RAZORPAY_KEY_SECRET;
+
+  const [displayRazorpay, setDisplayRazorpay] = useState(false);
+  const [orderDetails, setOrderDetails] = useState({
+    orderId: null,
+    currency: null,
+    amount: null,
+  });
+
+  const handleCreateOrder = async (action, amount, currency) => {
+    try {
+      const formdata = {
+        packageId: id,
+        oldpkId: currentid,
+        userID: userProfile.id,
+        username: userProfile.username,
+        phonenumber: userProfile.phonenumber,
+        email: userProfile.email,
+        pin: userProfile.pin,
+        location: userProfile.location,
+        country: userProfile.country,
+        duration: subpackage.duration,
+        monthlyfee: subpackage.monthlyfee,
+        monthDiff: monthdiff,
+        onetimeentrollmentfee: subpackage.onetimeentrollmentfee,
+        amount: amount * 100, // convert amount into the lowest unit (e.g., Dollar to Cents)
+        currency,
+        key_id,
+        KeySecret,
+      };
+
+      const response = await axios.post(
+        `http://localhost:2000/userroute/order?action=${action}`,
+        formdata
+      );
+
+      const data = response.data;
+
+      // const appliedPackage = {
+      //   packageId: id,
+      //   packageName: subpackage.membershiptype,
+      //   duration: subpackage.duration,
+      //   monthlyFee: subpackage.monthlyfee,
+      //   enrollmentFee: subpackage.onetimeentrollmentfee,
+      // };
+
+      // localStorage.setItem("appliedPackage", JSON.stringify(appliedPackage));
+
+      setOnshow(false);
+      setopen(true);
+      setopen400(false);
+      setshow400(false);
+
+      if (data && data.order_id) {
+        setOrderDetails({
+          orderId: data.order_id,
+          currency: data.currency,
+          amount: data.amount,
+        });
+        setDisplayRazorpay(true);
+      }
+    } catch (error) {
+       // Handle error here
+      console.error("Error creating order:", error);
+      if (error.response.status === 400) {
+                setopen400(true);
+                setshow400(true);
+                setopen(false);
+        }
+    }
+  };
+
   const { id } = useParams();
+  const navigate = useNavigate("");
 
   const [userProfile, setuserprofile] = useState("");
   const [open, setopen] = useState(false);
   const [open400, setopen400] = useState(false);
   const [show400, setshow400] = useState(false);
 
-
-
-
+  const [previousamount, setpreviousamount] = useState(0);
+  const [previouslist, setpreviousList] = useState([]);
+  const [create, setcreate] = useState();
+  const [currentdurations, setcurrentdurations] = useState();
+  const [currentmonthlyfee, setcurrentmonthlyfee] = useState();
 
   const [pkid, setpkid] = useState("");
-
-  const [upgradeId,setupgradeID] = useState("");
+  const [currentid, setcurrentid] = useState("");
+  const [upgradeId, setupgradeID] = useState("");
 
   const location = useLocation();
   const state = location.state;
-
-  const { pkid2 } = state || {};
-  console.log(pkid2, "received pid");
-
-  console.log(state,"11111111111")
-
- 
-  console.log(pkid,"pkid")
-
-  console.log(upgradeId,'pid')
 
   const handleClickOpen = () => {
     setopen(true);
@@ -50,13 +116,13 @@ function subscribepakage() {
 
   const handleClose = () => {
     setopen(false);
-    window.location.href = "/mysubscription";
+    setopen400(false);
+    // window.location.href = "/mysubscription";
   };
   const [onshow, setOnshow] = useState(false);
-
   const [onshow2, setOnshow2] = useState(false);
-
   const [onhide, setonhide] = useState(true);
+  const [monthdiff, setMonthDiff] = useState("");
 
   // const [renewShow, setrenewShow] = useState(true);
 
@@ -65,31 +131,6 @@ function subscribepakage() {
     setOnshow2(false);
     setonhide(false);
   };
-
-  // const [renwdetails, setrenewdetails] = useState({
-  //   username: "",
-  //   phonenumber: "",
-  //   email: "",
-  //   pin: "",
-  //   location: "",
-  //   country: "",
-  //   duration: "",
-  //   monthlyfee: "",
-  //   onetimeentrollmentfee: "",
-  //   totalpaid: "",
-  // });
-
-  // const renewData = async () => {
-  //   try {
-  //     const response = await axios.get(`http://localhost:2000/userroute/renewdata/${id}`);
-  //     console.log(response.data);
-  //     setrenewdetails(response.data);
-  //     setonhide(false);
-  //     setOnshow2(true);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 
   const [subpackage, setsubpackage] = useState({
     membershiptype: "  ",
@@ -122,68 +163,128 @@ function subscribepakage() {
   useEffect(() => {
     if (state) {
       setpkid(state.pkid);
+      setcurrentid(state.pkid);
       setOnshow(true);
-      setupgradeID(state.pkid2)
-      // setonhide(false);
+      setupgradeID(state.pid);
     } else {
       console.log("Error");
     }
+    if (pkid) {
+      setcurrentid(false);
+    }
     // renewData();
     subpacakgedata();
+    setpreviousamount(previous);
+    currentPackage(currentid);
     const getinfo = JSON.parse(localStorage.getItem("userProfile")) || {};
     setuserprofile(getinfo);
     myGeeks(subpackage.duration, subpackage.monthlyfee, subpackage.onetimeentrollmentfee);
-  }, [id, subpackage.duration, subpackage.monthlyfee, subpackage.onetimeentrollmentfee]);
-
-  
+  }, [id, subpackage.duration, subpackage.monthlyfee, subpackage.onetimeentrollmentfee, create]);
 
   const subpacakgedata = async () => {
     try {
       const response = await axios.get(`http://localhost:2000/userroute/subpacakge/${id}`);
       setsubpackage(response.data);
-      console.log("00000", response.data);
-      // setonhide(true);
       setOnshow2(false);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const Apply = () => {
-    const formdata = {
-      packageId: id,
-      userID: userProfile.id,
-      username: userProfile.username,
-      phonenumber: userProfile.phonenumber,
-      email: userProfile.email,
-      pin: userProfile.pin,
-      location: userProfile.location,
-      country: userProfile.country,
-      duration: subpackage.duration,
-      monthlyfee: subpackage.monthlyfee,
-      onetimeentrollmentfee: subpackage.onetimeentrollmentfee,
-      totalpaid: parseInt(duration * monthlyfee) + parseInt(onetimeentrollmentfee),
-    };
-    console.log(formdata, "subpackage formdata");
-    axios
-      .post("http://localhost:2000/adminroute/packageBill",formdata)
-      .then((response) => {
-        console.log(response.data);
-        setOnshow(false);
-        setopen(true);
-        setopen400(false);
-        setshow400(false);
-      })
-
-      .catch((error) => {
-        console.log(error);
-        if (error.response.status === 400) {
-          setopen400(true);
-          setshow400(true);
-          setopen(false);
-        }
-      });
+  const currentPackage = async (currentid) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:2000/userroute/currentpackage/${currentid}`
+      );
+      setpreviousList(response.data.data);
+      setMonthDiff(response.data.monthDiff);
+      setcreate(response.data.data.createdAt);
+      setcurrentdurations(response.data.data.duration);
+      setcurrentmonthlyfee(response.data.data.monthlyfee);
+      setpkid(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  const balance = currentdurations - monthdiff;
+  const previous = balance * currentmonthlyfee;
+
+  function monthDiff(d1, d2) {
+    if (!isValidDate(d1) || !isValidDate(d2)) {
+      return 0; // Return 0 if either date is invalid
+    }
+
+    let months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth();
+    months += d2.getMonth();
+
+    const oneMonthInMs = 30 * 24 * 60 * 60 * 1000;
+    const differenceInMs = d2 - d1;
+
+    if (differenceInMs >= oneMonthInMs) {
+      return months <= 0 ? 1 : months;
+    } else {
+      return 1;
+    }
+  }
+
+  function isValidDate(date) {
+    return date instanceof Date && !isNaN(date);
+  }
+
+  
+
+  // const Apply = (action) => {
+  //   const formdata = {
+  //     packageId: id,
+  //     oldpkId: currentid,
+  //     userID: userProfile.id,
+  //     username: userProfile.username,
+  //     phonenumber: userProfile.phonenumber,
+  //     email: userProfile.email,
+  //     pin: userProfile.pin,
+  //     location: userProfile.location,
+  //     country: userProfile.country,
+  //     duration: subpackage.duration,
+  //     monthlyfee: subpackage.monthlyfee,
+  //     monthDiff: monthdiff,
+  //     onetimeentrollmentfee: subpackage.onetimeentrollmentfee,
+  //     // totalpaid: parseInt(duration * monthlyfee) + parseInt(onetimeentrollmentfee),
+  //   };
+  //   axios
+  //     .post(`http://localhost:2000/adminroute/packageBill?action=${action}`, formdata)
+  //     .then((response) => {
+  //       const appliedPackage = {
+  //         packageId: id,
+  //         packageName: subpackage.membershiptype,
+  //         duration: subpackage.duration,
+  //         monthlyFee: subpackage.monthlyfee,
+  //         enrollmentFee: subpackage.onetimeentrollmentfee,
+  //       };
+
+  //       localStorage.setItem("appliedPackage", JSON.stringify(appliedPackage));
+
+  //       setOnshow(false);
+  //       setopen(true);
+  //       setopen400(false);
+  //       setshow400(false);
+
+  //       if (action === "subscribe" || action === "upgrade" || action === "renew") {
+  //         handleCreateOrder(action);
+  //       }
+  //     })
+
+  //     .catch((error) => {
+  //       console.log(error);
+  //       if (error.response.status === 400) {
+  //         setopen400(true);
+  //         setshow400(true);
+  //         setopen(false);
+  //       }
+  //     });
+  // };
+
 
   if (!localStorage.getItem("userProfile")) {
     window.location.href = "/login";
@@ -211,28 +312,29 @@ function subscribepakage() {
           >
             <div className="col-lg-4 col-md-4">
               {onhide && (
-              <Card style={{ width: "30rem" }}>
-                <Card.Body style={{ margin: "3rem" }}>
-                  <div style={{ display: "grid", justifyContent: "center", alignItems: "center" }}>
-                    <Card.Title>Package</Card.Title>
-                    <Card.Text style={{ width: "20em" }}>
-                      <h3>{subpackage.membershiptype}</h3>
-                      <h5>{subpackage.duration}</h5>
-                      <h5>Monthlyfee{subpackage.monthlyfee}</h5>
-                      <h5>One time entrollmentfee{subpackage.onetimeentrollmentfee}</h5>
-                    </Card.Text>
-                    {pkid && pkid.length > 1 ? (
-                      <></>
-                    ) : (
-                      
-                      <Button className="primary-btn" variant="primary"  onClick={getdetails}>
-                        Subscribe
-                      </Button>
-                    )}
-                  </div>
-                </Card.Body>
-              </Card>
-                )}
+                <Card style={{ width: "30rem" }}>
+                  <Card.Body style={{ margin: "3rem" }}>
+                    <div
+                      style={{ display: "grid", justifyContent: "center", alignItems: "center" }}
+                    >
+                      <Card.Title>Package</Card.Title>
+                      <Card.Text style={{ width: "20em" }}>
+                        <h3>{subpackage.membershiptype}</h3>
+                        <h5>{subpackage.duration}</h5>
+                        <h5>Monthlyfee{subpackage.monthlyfee}</h5>
+                        <h5>One time entrollmentfee{subpackage.onetimeentrollmentfee}</h5>
+                      </Card.Text>
+                      {pkid && pkid.length > 1 ? (
+                        <></>
+                      ) : (
+                        <Button className="primary-btn" variant="primary" onClick={getdetails}>
+                          Subscribe
+                        </Button>
+                      )}
+                    </div>
+                  </Card.Body>
+                </Card>
+              )}
             </div>
             <div className="col-lg-8 col-md-8">
               {onshow && (
@@ -257,7 +359,7 @@ function subscribepakage() {
                           <SoftBox>
                             <p>{subpackage.duration}</p>
                             <p>
-                              <span>Monthlee fee</span>
+                              <span>Monthlyfee</span>
                               {subpackage.monthlyfee}
                             </p>
                             <p>
@@ -265,24 +367,50 @@ function subscribepakage() {
                               {subpackage.onetimeentrollmentfee}
                             </p>
                           </SoftBox>
-                          <SoftBox>
-                            {/* <h5>Totel paid:{duration * subpackage.monthlyfee + subpackage.onetimeentrollmentfee}</h5> */}
 
-                            <h5>
-                              Total paid:{" "}
-                              {parseInt(duration * monthlyfee) + parseInt(onetimeentrollmentfee)}
-                            </h5>
-                          </SoftBox>
+                          {currentid && currentid.length > 1 ? (
+                            <SoftBox>
+                              <p>Previous amount {previous}</p>
+                              <p>
+                                Total amount:{" "}
+                                {parseInt(duration * monthlyfee) + parseInt(onetimeentrollmentfee)}
+                              </p>
+                              <h5>
+                                Balance paid{" "}
+                                {parseInt(duration * monthlyfee) +
+                                  parseInt(onetimeentrollmentfee) -
+                                  previousamount}
+                              </h5>
+                            </SoftBox>
+                          ) : (
+                            <SoftBox>
+                              <h5>
+                                Total paid:{" "}
+                                {parseInt(duration * monthlyfee) + parseInt(onetimeentrollmentfee)}
+                              </h5>
+                            </SoftBox>
+                          )}
 
                           <SoftBox>
-                            {pkid && pkid.length > 1 ? (
-                              <button className="primary-btn" onClick={Apply}>
-                                Renew
+                            {currentid && currentid.length > 1 ? (
+                              <button className="primary-btn" onClick={() => handleCreateOrder("upgrade")}>
+                                Upgrade
                               </button>
                             ) : (
-                              <button className="primary-btn" onClick={Apply}>
-                                Apply
-                              </button>
+                              <>
+                                {pkid && pkid.length > 1 ? (
+                                  <button className="primary-btn" onClick={() => handleCreateOrder("renew")}>
+                                    Renew
+                                  </button>
+                                ) : (
+                                  <button
+                                    className="primary-btn"
+                                    onClick={() => handleCreateOrder("subscribe")}
+                                  >
+                                    Apply
+                                  </button>
+                                )}
+                              </>
                             )}
                           </SoftBox>
                         </div>
@@ -292,7 +420,7 @@ function subscribepakage() {
                 </Card>
               )}
               <>
-                <Dialog
+                {/* <Dialog
                   open={open}
                   onClose={handleClose}
                   aria-labelledby="alert-dialog-title"
@@ -305,11 +433,11 @@ function subscribepakage() {
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>
-                    <Button onClick={handleClose} autoFocus>
-                      Agree
+                    <Button component={Link} to={"/mysubscription"} onClick={handleClose} autoFocus>
+                      OK
                     </Button>
                   </DialogActions>
-                </Dialog>
+                </Dialog> */}
                 {show400 && (
                   <Dialog
                     open={open400}
@@ -324,20 +452,39 @@ function subscribepakage() {
                       </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                      <Button component={Link} to={"/subscribe"} autoFocus>
+                      {/* <Button onClick={() => stateid(id, pkid)} autoFocus>
                         Upgrade
+                      </Button> */}
+                      <Button
+                        onClick={handleClose}
+                        component={Link}
+                        to={"/mysubscription"}
+                        autoFocus
+                      >
+                        OK
                       </Button>
                     </DialogActions>
                   </Dialog>
                 )}
+                ;
               </>
             </div>
           </div>
         </div>
+        {displayRazorpay && (
+          <RenderRazorpay
+            amount={orderDetails.amount}
+            currency={orderDetails.currency}
+            orderId={orderDetails.orderId}
+            keyId={key_id}
+            keySecret={KeySecret}
+          />
+        )}
+        ;
       </section>
       <Footer />
     </div>
   );
 }
 
-export default subscribepakage;
+export default Subscribepakage;

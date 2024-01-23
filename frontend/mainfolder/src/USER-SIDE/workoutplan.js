@@ -11,38 +11,52 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 function Workoutplan() {
   const [list, Setlist] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [types, settypes] = useState([]);
   const [hide, sethide] = useState(false);
-  const [show, setshow] = useState(false);
-  const [profile,setprofile] = useState("");
+  const [show, setshow] = useState(true);
+  const [profile, setprofile] = useState();
 
   useEffect(() => {
-    const getDetails = JSON.parse(localStorage.getItem("userProfile")) || {};
-    setprofile(getDetails);
-
-    if (localStorage.getItem("userProfile")) {
-      setshow(true);
-      sethide(false);
-    } else {
-      setshow(false);
-      sethide(true);
-    }
-
-    getplan();
+    planTypeList();
+    getProfile();
   }, []);
 
-  const getplan = useCallback(async () => {
-    try {
-      const response = await axios.get(`http://localhost:2000/userroute/getworkoutplanall`);
-      const data = await response.data;
-      console.log("00000000", data);
-      Setlist(data);
-    } catch (error) {
-      console.log(error, "get data err plan");
+  const getProfile = () => {
+    const getDetails = JSON.parse(localStorage.getItem("appliedPackage")) || {};
+    setprofile(getDetails);
+
+    if (Object.keys(getDetails).length > 0) {
+      setshow(true);
+    } else {
+      setshow(true);
     }
-  });
+  };
+
+  const planTypeList = async () => {
+    try {
+      const response = await axios.get("http://localhost:2000/userroute/plantypes");
+      settypes(response.data);
+    } catch (err) {
+      console.log(err);
+      if (!localStorage.getItem("token")) {
+        window.location.href = "/";
+      }
+    }
+  };
+
+
+  const handleClickOpen = () => setOpen(true);
+
+  const handleClose = () => setOpen(false);
 
   return (
     <div>
@@ -56,12 +70,6 @@ function Workoutplan() {
             <div className="col-lg-12">
               <div className="breadcrumb-text">
                 <h2>workout </h2>
-                <div className="breadcrumb-option">
-                  <a href="./index.html">
-                    <i className="fa fa-home" /> Home
-                  </a>
-                  <span>Gallery</span>
-                </div>
               </div>
             </div>
           </div>
@@ -71,53 +79,51 @@ function Workoutplan() {
         <section className="trainer-section about-trainer spad">
           <div className="container">
             <div className="row">
-              {list.map((item) => (
-                <div className="col-lg-4 col-md-6" key={item._id}>
-                  <Card  style={{height:"70%", width:"70%" ,backgroundColor:"green" }} >
+              {types.map((item, index) => (
+                <div className="col-lg-4 col-md-6" key={index}>
+                  <Card style={{ height: "70%", width: "70%" }}>
                     <CardMedia
                       sx={{ height: 140 }}
                       image="/static/images/cards/contemplative-reptile.jpg"
                     />
                     <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                       <div style={{height:'20%'}} dangerouslySetInnerHTML={{ __html: item.title.replace('<img','<img style="width: 50%; height: 50%;"') }} />
+                      <Typography gutterBottom variant="h3" component="div">
+                        {item.type}
                       </Typography>
                       <CardActions>
-                      <Button size="small">view</Button>
-                    </CardActions>
+                         {profile && Object.keys(profile).length > 0 ? (
+                            <Button size="small" component={Link} to={`/workoutview/${item._id}`}>
+                              View
+                            </Button>
+                          ) : (
+                            <Button onClick={handleClickOpen}>View</Button>
+                          )}
+                      </CardActions>
                     </CardContent>
-                   
                   </Card>
                 </div>
               ))}
-            </div>
-          </div>
-        </section>
-      )}
-      {hide && (
-        <section className="trainer-section about-trainer spad">
-          <div className="container">
-            <div className="row">
-              {list.slice(0, 3).map((item) => (
-                <div className="col-lg-4 col-md-6" key={item._id}>
-                  <Card sx={{ maxWidth: 345 }}>
-                    <CardMedia
-                      sx={{ height: 140 }}
-                      image="/static/images/cards/contemplative-reptile.jpg"
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                        <div dangerouslySetInnerHTML={{ __html: item.title }} />
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button component={Link} to={"/signup"} size="small">
-                        view more
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </div>
-              ))}
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {"Alert"}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                   You have no active subscription package 
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose}>cancel</Button>
+                  <Button onClick={handleClose} component={Link} to={"/subscribe"} autoFocus>
+                    subscribe now
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </div>
           </div>
         </section>

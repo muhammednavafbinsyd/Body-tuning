@@ -40,8 +40,6 @@ import { useParams } from "react-router-dom";
 function EditUser() {
   const [showPassword, setshowPassword] = useState(false);
   const { id } = useParams();
-  console.log(id);
-  // const [userImage,setUserImage ] =useState(null)
   const [invalid, setinvalid] = useState("");
   const [input1, setInput1] = useState("");
   const [input2, setInput2] = useState("");
@@ -79,40 +77,7 @@ function EditUser() {
     const validationErrors = [];
 
     e.preventDefault();
-    // try {
-    //   const formData = new FormData();
-    //   formData.append("userName", userEdit.userName);
-    //   formData.append("email", userEdit.email);
-    //   formData.append("phoneNumber", userEdit.phoneNumber);
-    //   formData.append("password", userEdit.password);
-    //   if (userEdit.image) {
-    //     formData.append("image", userEdit.image);
-    //   }
-    //   console.log(userEdit.image);
-
-    //   const response = await axios.put(
-    //     `http://localhost:2000/adminroute/userUpdate/${id}`,
-    //     formData,
-    //     {
-    //       headers: {
-    //         "Content-Type": "multipart/form-data",
-    //       },
-    //     }
-    //   );
-
-    //   console.log(response.data);
-    //   if (response.status === 200) {
-    //     console.log("User updated successfully");
-    //     setinvalid("");
-    //     window.location.href = "/users";
-    //     // alert("User updated successfully");
-    //   }
-    // } catch (err) {
-    //   if (err.response.status === 400) {
-    //     setinvalid("Email is already exist");
-    //   }
-    //   console.error("Error updating user:", err);
-    // }
+    
 
     if (!userEdit.userName) {
       setInput1("Enter a userName");
@@ -171,7 +136,6 @@ if(validationErrors.length === 0){
     if (userEdit.image) {
       formData.append("image", userEdit.image);
     }
-    console.log(userEdit.image);
 
     const response = await axios.put(
       `http://localhost:2000/adminroute/userUpdate/${id}`,
@@ -183,9 +147,7 @@ if(validationErrors.length === 0){
       }
     );
 
-    console.log(response.data);
     if (response.status === 200) {
-      console.log("User updated successfully");
       setinvalid("");
       window.location.href = "/users";
       // alert("User updated successfully");
@@ -227,20 +189,7 @@ if(validationErrors.length === 0){
     }));
   };
 
-  // const handleImageUpload = (event) => {
-  //   const file = event.target.files[0];
 
-  //   if (file) {
-  //     console.log('Selected file:', file);
-  //     try {
-  //       const imageUrl = URL.createObjectURL(file);
-  //       console.log('Generated image URL:', imageUrl);
-  //       setUserImage(imageUrl);
-  //     } catch (error) {
-  //       console.error('Error creating object URL:', error);
-  //     }
-  //   }
-  // };
 
   const toggleEye = () => {
     setshowPassword(!showPassword);

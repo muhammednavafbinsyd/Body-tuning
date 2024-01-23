@@ -11,38 +11,47 @@ import Typography from "@mui/material/Typography";
 import Bannerimg from "../assets/img/hero-bg.jpg";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 function Dietplan() {
   const [list, Setlist] = useState([]);
   const [hide, sethide] = useState(false);
-  const [show, setshow] = useState(false);
+  const [show, setshow] = useState(true);
+  const [open, setopen] = useState(false);
   const [profile, setprofile] = useState("");
 
+
   useEffect(() => {
-    const getDetails = JSON.parse(localStorage.getItem("userProfile")) || {};
-    setprofile(getDetails);
-
-    if (localStorage.getItem("userProfile")) {
-      sethide(false);
-      setshow(true);
-    } else {
-      setshow(false);
-      sethide(true);
-    }
-
-    getplan();
+    gettype();
+    getProfile();
   }, []);
 
-  const getplan = useCallback(async () => {
-    try {
-      const response = await axios.get(`http://localhost:2000/userroute/getdietplanall`);
-      const data = await response.data;
-      console.log(data, "8888888888");
-      Setlist(data);
-    } catch (error) {
-      console.log(error, "get data err plan");
+  const getProfile = () => {
+    const getDetails = JSON.parse(localStorage.getItem("appliedPackage")) || {};
+    setprofile(getDetails);
+
+    if (Object.keys(getDetails).length > 0) {
+      setshow(true);
+    } else {
+      setshow(true);
     }
-  });
+  };
+
+  const gettype = async () => {
+    try {
+      const response = await axios.get("http://localhost:2000/userroute/plantypes");
+      Setlist(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleopen = () => setopen(true);
+  const handleClose = () => setopen(false);
 
   return (
     <div>
@@ -56,12 +65,6 @@ function Dietplan() {
             <div className="col-lg-12">
               <div className="breadcrumb-text">
                 <h2>Diet</h2>
-                {/* <div className="breadcrumb-option">
-                  <a href="./index.html">
-                    <i className="fa fa-home" /> Home
-                  </a>
-                  <span>Gallery</span>
-                </div> */}
               </div>
             </div>
           </div>
@@ -71,50 +74,48 @@ function Dietplan() {
         <section className="trainer-section about-trainer spad">
           <div className="container">
             <div className="row">
-              {list.map((item) => (
-                <div className="col-lg-4 col-md-6" key={item._id}>
-                  <Card sx={{ maxWidth: 345 }}>
+              {list.map((item, index) => (
+                <div className="col-lg-4 col-md-6" key={index}>
+                  <Card style={{ height: "70%", width: "70%" }}>
                     <CardMedia
                       sx={{ height: 140 }}
                       image="/static/images/cards/contemplative-reptile.jpg"
                     />
                     <CardContent>
                       <Typography gutterBottom variant="h5" component="div">
-                        <div dangerouslySetInnerHTML={{ __html: item.title }} />
+                        {item.type}
                       </Typography>
                     </CardContent>
                     <CardActions>
-                      <Button size="small">view</Button>
+                      {profile &&  Object.keys(profile).length > 0 ? (
+                        <Button size="small" component={Link} to={`/dietview/${item._id}`}>
+                          View
+                        </Button>
+                      ) : (
+                        <Button onClick={handleopen}>View</Button>
+                        // <></>
+                      )}
                     </CardActions>
                   </Card>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-      {hide && (
-        <section className="trainer-section about-trainer spad">
-          <div className="container">
-            <div className="row">
-              {list.map((item) => (
-                <div className="col-lg-4 col-md-6" key={item._id}>
-                  <Card sx={{ maxWidth: 345 }}>
-                    <CardMedia
-                      sx={{ height: 140 }}
-                      image="/static/images/cards/contemplative-reptile.jpg"
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                        <div dangerouslySetInnerHTML={{ __html: item.title }} />
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button component={Link} to={"/signup"} size="small">
-                        view more
+                  <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                  >
+                    <DialogTitle id="alert-dialog-title">{"Alert"}</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="alert-dialog-description">
+                        You have no active subscription package
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleClose}>cancel</Button>
+                      <Button onClick={handleClose} component={Link} to={"/subscribe"} autoFocus>
+                        subscribe now
                       </Button>
-                    </CardActions>
-                  </Card>
+                    </DialogActions>
+                  </Dialog>
                 </div>
               ))}
             </div>

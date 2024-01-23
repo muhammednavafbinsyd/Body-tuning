@@ -35,17 +35,18 @@ Coded by www.creative-tim.com
   10. The `component` key is used to store the component of its route.
 */
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
-import ReviewsIcon from '@mui/icons-material/Reviews';
+import ReviewsIcon from "@mui/icons-material/Reviews";
+import BookIcon from "@mui/icons-material/Book";
+import CollectionsIcon from "@mui/icons-material/Collections";
+import DeviceHubIcon from "@mui/icons-material/DeviceHub";
+import PeopleIcon from '@mui/icons-material/People';
+import SummarizeIcon from '@mui/icons-material/Summarize';
 
 // Soft UI Dashboard React layouts
 import Dashboard from "layouts/dashboard";
 import UserMangement from "layouts/user-management";
 import Trainers from "layouts/Trainers";
 
-import Tables from "layouts/tables - Copy";
-import Billing from "layouts/billing";
-import VirtualReality from "layouts/virtual-reality";
-import RTL from "layouts/rtl";
 import Profile from "layouts/profile";
 import EditAdminDatas from "layouts/profile/data/EditAdminDatas";
 import SignIn from "layouts/authentication/sign-in";
@@ -54,6 +55,7 @@ import Forgetpassword from "layouts/authentication/sign-in/forgetpassword";
 import Home from "USER-SIDE/home";
 import About from "USER-SIDE/about";
 import Blog from "USER-SIDE/blog";
+import Blogview from "USER-SIDE/blogview";
 // import Classes from "USER-SIDE/classes";
 import Gallery from "USER-SIDE/gallery";
 import Contact from "USER-SIDE/contact";
@@ -67,16 +69,17 @@ import Trainersprofile from "USER-SIDE/trainersprofile";
 
 // import Navbar from "USER-SIDE/Navbar"
 
-
 import Users from "layouts/Users";
 import Editprofile from "USER-SIDE/editprofile";
 import Changepassword from "USER-SIDE/changepassword";
 import Forgotpassword from "USER-SIDE/forgotpassword";
 import Otpverification from "USER-SIDE/otpverification";
 import Passwordset from "USER-SIDE/passwordset";
-import Subscribe from "USER-SIDE/subscribe"
+import Subscribe from "USER-SIDE/subscribe";
 import Subscribepakage from "USER-SIDE/subscribepakage";
-import Membershipview  from "USER-SIDE/membershipview";
+import Membershipview from "USER-SIDE/membershipview";
+import Workoutview from "USER-SIDE/workoutview";
+import Dietview from "USER-SIDE/dietview";
 
 // Soft UI Dashboard React icons
 import Shop from "examples/Icons/Shop";
@@ -89,6 +92,7 @@ import CreditCard from "examples/Icons/CreditCard";
 import Cube from "examples/Icons/Cube";
 import SignUp from "layouts/authentication/sign-up";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import Plantype from "./layouts/plantype";
 import EditUser from "./layouts/user-management/data/EditUsers";
 import SubsEdit from "./layouts/Subscrption/data/EditsubsPlan";
 import TrainersEdit from "./layouts/Trainers/data/editTrainers";
@@ -96,20 +100,34 @@ import Workoutplan from "./layouts/Trainers/workoutplan";
 import Dietplan from "./layouts/Trainers/dietplan";
 import Subscription from "./layouts/Subscrption/";
 import Services from "./layouts/service-management";
-import Testimonial from "./layouts/testimonial-management"
-import EditService from "./layouts/service-management/data/EditServices"
-import EditTestimonial from "./layouts/testimonial-management/data/TestimonialEdit"
+import Testimonial from "./layouts/testimonial-management";
+import Blogs from "./layouts/blog-management";
+import GalleryMangment from "./layouts/Gallery-mangement";
+import BlogView2 from "./layouts/blog-management/data/blogview2";
+import EditService from "./layouts/service-management/data/EditServices";
+import EditTestimonial from "./layouts/testimonial-management/data/TestimonialEdit";
+import Editblog from "./layouts/blog-management/data/editblog";
+import Editplantype from "./layouts/plantype/data/plantypeEdit";
+import GalleryEdit from "./layouts/Gallery-mangement/data/editgallery";
 import SportsGymnasticsIcon from "@mui/icons-material/SportsGymnastics";
 import CardMembershipRoundedIcon from "@mui/icons-material/CardMembershipRounded";
 import Verifyotp from "./layouts/authentication/sign-in/verifyotp";
 import Setpassword from "./layouts/authentication/sign-in/setpassword";
+import Addblog from "./layouts/blog-management/data/addblog";
 import AddPlan from "./layouts/Trainers/workoutplan/addplan";
 import ADDPLAN from "./layouts/Trainers/dietplan/addplan";
 import Editworkoutplan from "./layouts/Trainers/workoutplan/editworkoutplan";
 import Editdietplan from "./layouts/Trainers/dietplan/editdietplan";
-import SubscribedUsers from "./layouts/subscribedusers-management"
-import View from "./layouts/subscribedusers-management/data/view"
-import Mysubscription from "USER-SIDE/mysubscription"
+import SubscribedUsers from "./layouts/subscribedusers-management";
+import View from "./layouts/subscribedusers-management/data/view";
+import Mysubscription from "USER-SIDE/mysubscription";
+
+// reports
+import SubscribedUsersReport from "./layouts/subscribed-users-report"
+import Usersreport from "./layouts/users-report"
+import Salesreport from "./layouts/sales-report"
+
+// razorpay 
 
 const routes = [
   // {
@@ -150,17 +168,17 @@ const routes = [
     component: <Blog />,
     noCollapse: true,
   },
-  // {
-  //   type: "",
-  //   name: "classes",
-  //   key: "classes",
-  //   route: "/classes",
-  //   icon: <Shop size="12px" />,
-  //   component: <Classes />,
-  //   noCollapse: true,
 
-  // },
- 
+  {
+    type: "",
+    name: "blogview",
+    key: "blogview",
+    route: "/blogview/:title",
+    icon: <Shop size="12px" />,
+    component: <Blogview />,
+    noCollapse: true,
+  },
+
   {
     type: "",
     name: "gallery",
@@ -201,13 +219,12 @@ const routes = [
     noCollapse: true,
   },
   {
-   
     type: "",
     name: "subscribe",
     key: "subscribe",
     route: "/subscribe",
     icon: <Shop size="12px" />,
-    component: <Subscribe/>,
+    component: <Subscribe />,
     noCollapse: true,
   },
   {
@@ -216,7 +233,7 @@ const routes = [
     key: "Subscribepakage",
     route: "/subscribepackage/:id",
     icon: <Shop size="12px" />,
-    component: <Subscribepakage/>,
+    component: <Subscribepakage />,
     noCollapse: true,
   },
   {
@@ -225,18 +242,16 @@ const routes = [
     key: "Membershipview",
     route: "/membershipview/:id",
     icon: <Shop size="12px" />,
-    component: <Membershipview/>,
+    component: <Membershipview />,
     noCollapse: true,
   },
   {
-  
     type: "",
     name: "view",
     key: "view",
     route: "/view/:id",
-    component:<View />,
+    component: <View />,
     noCollapse: true,
-
   },
 
   {
@@ -256,8 +271,7 @@ const routes = [
     icon: <Shop size="12px" />,
     component: <Mysubscription />,
     noCollapse: true,
-  }
-   ,
+  },
   {
     type: "",
     name: "Editprofile",
@@ -320,7 +334,22 @@ const routes = [
     route: "/trainersprofile/:id",
     component: <Trainersprofile />,
   },
-
+  {
+    type: "",
+    name: "workoutview",
+    key: "workoutview",
+    route: "/workoutview/:id",
+    component: <Workoutview />,
+    noCollapse: "true",
+  },
+  {
+    type: "",
+    name: "dietview",
+    key: "dietview",
+    route: "/dietview/:id",
+    component: <Dietview />,
+    noCollapse: true,
+  },
   {
     type: "",
     name: "workoutfront",
@@ -408,6 +437,18 @@ const routes = [
     component: <AddPlan />,
   },
   {
+    name: "addblog",
+    key: "addblog",
+    route: "/addblog",
+    component: <Addblog />,
+  },
+  {
+    name: "Editblog",
+    key: "Editblog",
+    route: "/editblog/:id",
+    component: <Editblog />,
+  },
+  {
     name: "editworkoutplan",
     key: "editworkoutplan",
     route: "/editworkoutplan/:id/:id",
@@ -416,7 +457,7 @@ const routes = [
   ////
   {
     type: "collapse",
-    name: "Admin users",
+    name: "Admins",
     key: "Admin Users",
     route: "/users",
     icon: <PersonAddIcon size="12px" />,
@@ -447,8 +488,8 @@ const routes = [
     name: "Subscribed users",
     key: "subscribedusers",
     route: "/subscribedusers",
-    icon: <CardMembershipRoundedIcon size="12px" />,
-    component: <SubscribedUsers/>,
+    icon: <PeopleIcon size="12px" />,
+    component: <SubscribedUsers />,
     noCollapse: true,
   },
   {
@@ -459,7 +500,22 @@ const routes = [
     icon: <SportsGymnasticsIcon size="12px" />,
     component: <Trainers />,
   },
-  
+  {
+    type: "collapse",
+    name: "plantype",
+    key: "plantype",
+    route: "/plantype",
+    icon: <DeviceHubIcon size="12px" />,
+
+    component: <Plantype />,
+  },
+  {
+    type: "",
+    name: "Editplantype",
+    key: "Editplantype",
+    route: "/Editplantype/:id",
+    component: <Editplantype />,
+  },
   {
     type: "collapse",
     name: "Services",
@@ -479,11 +535,46 @@ const routes = [
     noCollapse: true,
   },
   {
+    type: "collapse",
+    name: "Gallery",
+    key: "Gallery",
+    route: "/gallery2",
+    icon: <CollectionsIcon size="12px" />,
+    component: <GalleryMangment />,
+    noCollapse: true,
+  },
+  {
+    type: "",
+    name: "galleryEdit",
+    key: "galleryEdit",
+    route: "/galleryEdit/:id",
+    icon: <CollectionsIcon size="12px" />,
+    component: <GalleryEdit />,
+    noCollapse: true,
+  },
+
+  {
+    type: "collapse",
+    name: "Blogs",
+    key: "Blogs",
+    route: "/Blogs",
+    icon: <BookIcon size="12px" />,
+    component: <Blogs />,
+    noCollapse: true,
+  },
+  {
+    type: "",
+    name: "BlogView2",
+    key: "BlogView2",
+    route: "/blogview2/:id",
+    component: <BlogView2 />,
+    noCollapse: true,
+  },
+  {
     type: "",
     name: "EditService",
     key: "EditService",
     route: "/editService/:id",
-    // icon: <MiscellaneousServicesIcon size="12px" />,
     component: <EditService />,
     noCollapse: true,
   },
@@ -492,54 +583,7 @@ const routes = [
     name: "EditTestimonial",
     key: "EditTestimonial",
     route: "/editTestimonial/:id",
-    // icon: <MiscellaneousServicesIcon size="12px" />,
     component: <EditTestimonial />,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "Tables",
-    key: "tables",
-    route: "/tables",
-    icon: <Office size="12px" />,
-    component: <Tables />,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "Billing",
-    key: "billing",
-    route: "/billing",
-    icon: <CreditCard size="12px" />,
-    component: <Billing />,
-    noCollapse: true,
-  },
-  {
-    type: "",
-    name: "Virtual Reality",
-    key: "virtual-reality",
-    route: "/virtual-reality",
-    icon: <Cube size="12px" />,
-    component: <VirtualReality />,
-    noCollapse: true,
-  },
-  {
-    type: "",
-    name: "RTL",
-    key: "rtl",
-    route: "/rtl",
-    icon: <Settings size="12px" />,
-    component: <RTL />,
-    noCollapse: true,
-  },
-  { type: "title", title: "Account Pages", key: "account-pages" },
-  {
-    type: "collapse",
-    name: "Profile",
-    key: "profile",
-    route: "/profile",
-    icon: <CustomerSupport size="12px" />,
-    component: <Profile />,
     noCollapse: true,
   },
   {
@@ -590,6 +634,49 @@ const routes = [
     component: <SignUp />,
     noCollapse: true,
   },
+  { type: "title", title: "Account Pages", key: "account-pages" },
+  {
+    type: "collapse",
+    name: "Profile",
+    key: "profile",
+    route: "/profile",
+    icon: <CustomerSupport size="12px" />,
+    component: <Profile />,
+    noCollapse: true,
+  },
+  { type: "title", title: "Reports", key: "Reports" },
+  // SubscribedUsersReport
+  {
+    type: "collapse",
+    name: "Subscribed users",
+    key: "SubscribedUsersReport",
+    route: "/subscribedusersreport",
+    icon: <SummarizeIcon size="12px" />,
+    component: <SubscribedUsersReport />,
+    noCollapse: true,
+  },
+  // Usersreport
+  {
+    type: "collapse",
+    name: "Users  ",
+    key: "Usersreport",
+    route: "/usersreport",
+    icon: <SummarizeIcon size="12px" />,
+    component: <Usersreport />,
+    noCollapse: true,
+  },
+
+  // Salesreport
+  {
+    type: "collapse",
+    name: "Sales  ",
+    key: "Salesreport",
+    route: "/salesreport",
+    icon: <SummarizeIcon size="12px" />,
+    component: <Salesreport />,
+    noCollapse: true,
+  },
+
 ];
 
 export default routes;

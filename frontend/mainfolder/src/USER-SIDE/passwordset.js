@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import SoftInput from "components/SoftInput";
 import { Button } from "@mui/material";
-// import "../assets/usercss/forgotpassword.css";
 import axios from "axios";
 
 function Passwordset() {
@@ -35,11 +34,10 @@ function Passwordset() {
         email: email,
       };
       axios
-        .post("http://localhost:2000/userroute/newpassword", data)
+        .post("http://localhost:2000/userroute/newpassword",data)
         .then((response) => {
           if (response.status === 200) {
-            console.log(response.data, email);
-            console.log(response.data.success);
+
             alert(response.data.success, "success ");
             localStorage.removeItem("email");
             window.location.href = "/login";

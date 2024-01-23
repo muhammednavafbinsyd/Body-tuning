@@ -37,8 +37,7 @@ function  UserData() {
     axios.defaults.headers.common["Authorization"] = token;
     try {
       const response = await axios.get("http://localhost:2000/userroute/getUsers");
-      console.log("00000000", response.data);
-      setList(response.data);
+      setList(response.data.getUsers);
     } catch (err) {
       console.log("Error getting subscription", err);
       if (!localStorage.getItem("token")) {

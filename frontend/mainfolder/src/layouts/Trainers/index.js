@@ -35,11 +35,14 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import Table from "examples/Tables/Table";
 
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+
 import Switch from "@mui/material";
 
 // Data
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Zoom } from "@mui/material";
 import axios from "axios";
 import trainers from "layouts/Trainers/data/authorsTableData";
@@ -47,7 +50,9 @@ import trainers from "layouts/Trainers/data/authorsTableData";
 
 function Tables() {
   // const navigate = useNavigate();
-  const { columns, rows } = trainers("");
+  const [plantype,setplantypes] = useState("");
+
+  const { columns, rows } = trainers({plantype});
 
   const [invalid, setinvalid] = useState("");
 
@@ -58,6 +63,7 @@ function Tables() {
   const [contact, Setcontact] = useState("");
   const [description, setdescription] = useState("");
   const [status, Setstatus] = useState("Active");
+  const [types, settypes] = useState("");
   const [image, setImage] = useState([]);
 
   const [err1, seterr1] = useState("");
@@ -70,6 +76,22 @@ function Tables() {
   // const [workout,Setworkout] = useState("")
   // const [diet,Setdiet] = useState("")
 
+  const [type, settype] = useState([]);
+  useEffect(() => {
+    typeofplan();
+  }, []);
+
+  const typeofplan = async () => {
+    const token = localStorage.getItem("token");
+    axios.defaults.headers.common["Authorization"] = token;
+    try {
+      const response = await axios.get("http://localhost:2000/adminroute/plantypeGet");
+      settype(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const handlesave = (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -79,12 +101,13 @@ function Tables() {
     formData.append("contact", contact);
     formData.append("description", description);
     formData.append("status", status);
+    formData.append("type", types);
 
     for (let i = 0; i < image.length; i++) {
       formData.append("image", image[i]);
     }
 
-    console.log(formData);
+  
 
     axios
       .post("http://localhost:2000/adminroute/trainerspost", formData, {
@@ -93,7 +116,6 @@ function Tables() {
         },
       })
       .then((response) => {
-        console.log("data posted successfully", response.data);
         handleClose();
         setinvalid("");
         window.location.href = "/Trianers";
@@ -162,6 +184,18 @@ function Tables() {
           <Card>
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
               <SoftTypography variant="h6">{"Trainer's"}</SoftTypography>
+              <select id="dropdown-basic-button" title="Type" onChange={(e)=>setplantypes(e.target.value)}  >
+              <option value={""}>
+                    All
+                  </option>
+                {type.map((item,index) => (
+                  <>
+                  <option value={item._id} key={index}>
+                    {item.type}
+                  </option>
+                  </>
+                ))}
+              </select>
               <Button variant="contained" onClick={handleOpen}>
                 Add Trainer
               </Button>
@@ -176,7 +210,7 @@ function Tables() {
                 },
               }}
             >
-              <Table columns={columns} rows={rows} />
+              <Table columns={columns} rows={rows} plantype={plantype} />
             </SoftBox>
           </Card>
         </SoftBox>
@@ -254,7 +288,16 @@ function Tables() {
               onChange={(e) => setdescription(e.target.value)}
             ></textarea>
             <p style={{ fontSize: "10px", marginLeft: "1rem", color: "red" }}>{err6}</p>
-            <select name="status" id="Active-Deactive"  onChange={(e) => Setstatus(e.target.value)}   >
+            <SoftBox>
+              <select name="type" onChange={(e) => settypes(e.target.value)}>
+                {type.map((item, index) => (
+                  <option value={item._id} key={index}>
+                    {item.type}
+                  </option>
+                ))}
+              </select>
+            </SoftBox>
+            <select name="status" id="Active-Deactive" onChange={(e) => Setstatus(e.target.value)}>
               <option value="Active">Active</option>
               <option value="Deactive">Deactive</option>
             </select>

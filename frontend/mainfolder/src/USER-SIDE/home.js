@@ -20,6 +20,7 @@ import testi2 from "../assets/img/testimonial/quote-left.png";
 import bannerimage2 from "../assets/img/banner-bg.jpg";
 import personimage from "../assets/img/banner-person.png";
 import bg from "../assets/img/classes/classes-1.jpg";
+
 // import { useState } from "react";
 
 // import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -39,7 +40,7 @@ function Home() {
 
   // services
   const [list, setList] = useState([]);
-  // stattus
+  // status
   const [listStatus, setListStatus] = useState([]);
   // Testimonials
   const [listTestimonials, setListTestimonials] = useState([]);
@@ -147,10 +148,7 @@ function Home() {
 
       axios
         .post("http://localhost:2000/adminroute/registration", fromdata)
-        .then((response) => {
-          console.log(response);
-          alert("successfullyRegistered");
-        })
+        .then((response) => {})
         .catch((error) => {
           console.log(error);
           alert("failedToRegister");
@@ -158,13 +156,7 @@ function Home() {
     }
   };
 
-  console.log("hhhhhh", list);
-
-  // const [serviceDisplay, setServiceDisplay] = useState({
-  //   image: null,
-  //   title: "",
-  //   description: "",
-  // });
+ 
 
   useEffect(() => {
     getServices();
@@ -172,17 +164,14 @@ function Home() {
     TestimonialsGet();
     membership();
   }, []);
-
   const getServices = async () => {
     try {
       const response = await axios.get("http://localhost:2000/userroute/services");
-      console.log("0000000000000000", response.data);
       setList(response.data);
     } catch (err) {
       console.log(err, "An error occurred");
     }
   };
-
   const getstatus = async () => {
     try {
       const response = await axios.get("http://localhost:2000/userroute/statusOnly");
@@ -233,6 +222,14 @@ function Home() {
     }
   };
 
+  const [open, setopen] = useState(false);
+  const [hide, sethide] = useState(true);
+
+  function handleclick() {
+    setopen(true);
+    sethide(false);
+  }
+
   return (
     <div>
       <Navbar />
@@ -245,19 +242,18 @@ function Home() {
               <div className="hero-text">
                 <span>Check your bmi</span>
                 <h1>BMI CALCULATOR</h1>
-                {/* <p>Gutim comes packed with the user-friendly BMI Calculator<br /> shortcode which lets</p>
-              <a href="#" className="primary-btn">Read More</a> */}
+
                 <SoftBox className="your_bmi">
                   <SoftInput
                     className="bmi_input"
-                    type="number"
+                    type="tel"
                     placeholder="Enter your height(cm)"
                     value={heightValue}
                     onChange={(e) => setHeightValue(e.target.value)}
                   ></SoftInput>
                   <SoftInput
                     className="bmi_input"
-                    type="number"
+                    type="tel"
                     placeholder="Enter your weight(kg)"
                     value={weightValue}
                     onChange={(e) => setWeightValue(e.target.value)}
@@ -307,15 +303,20 @@ function Home() {
                   ones well-being. Achieving fitness involves cardiovascular endurance, muscular
                   strength, flexibility, and body composition.
                 </p>
-                <p className="second-para">
-                  Regular exercise routines, balanced diets, adequate sleep, and a commitment to a
-                  healthy lifestyle are key components in attaining and sustaining physical fitness.
-                  Fitness not only benefits the body but also plays a crucial role in mental health,
-                  boosting mood, reducing stress, and enhancing overall quality of life.
-                </p>
-                <a href="#" className="primary-btn">
-                  Read More
-                </a>
+                {open && (
+                  <p className="second-para">
+                    Regular exercise routines, balanced diets, adequate sleep, and a commitment to a
+                    healthy lifestyle are key components in attaining and sustaining physical
+                    fitness. Fitness not only benefits the body but also plays a crucial role in
+                    mental health, boosting mood, reducing stress, and enhancing overall quality of
+                    life.
+                  </p>
+                )}
+                {hide && (
+                  <a href="#" className="primary-btn" onClick={handleclick}>
+                    Read More
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -669,61 +670,7 @@ function Home() {
       </section>
       {/* Register Section End */}
       {/* Latest Blog Section Begin */}
-      {/* <section className="latest-blog-section spad">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="section-title">
-                <h2>Latest Blog</h2>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-lg-4 col-md-6">
-              <div className="single-blog-item">
-                <img src="img/blog/blog-1.jpg" alt />
-                <div className="blog-widget">
-                  <div className="bw-date">February 17, 2019</div>
-                  <a href="#" className="tag">
-                    #Gym
-                  </a>
-                </div>
-                <h4>
-                  <a href="#">10 States At Risk of Rural Hospital Closures</a>
-                </h4>
-              </div>
-            </div>
-            <div className="col-lg-4 col-md-6">
-              <div className="single-blog-item">
-                <img src="img/blog/blog-2.jpg" alt />
-                <div className="blog-widget">
-                  <div className="bw-date">February 17, 2019</div>
-                  <a href="#" className="tag">
-                    #Sport
-                  </a>
-                </div>
-                <h4>
-                  <a href="#">Diver who helped save Thai soccer team</a>
-                </h4>
-              </div>
-            </div>
-            <div className="col-lg-4 col-md-6">
-              <div className="single-blog-item">
-                <img src="img/blog/blog-3.jpg" alt />
-                <div className="blog-widget">
-                  <div className="bw-date">February 17, 2019</div>
-                  <a href="#" className="tag">
-                    #Body
-                  </a>
-                </div>
-                <h4>
-                  <a href="#">Man gets life in prison for stabbing</a>
-                </h4>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section> */}
+
       <Footer />
     </div>
   );

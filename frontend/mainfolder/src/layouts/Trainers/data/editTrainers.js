@@ -36,10 +36,12 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import curved6 from "assets/images/illustrations/rocket-white.png";
 import axios from "axios";
 import data from "layouts/dashboard/components/Projects/data";
+import { IeOutlined } from "@ant-design/icons";
 
 function EditTrainers() {
   const { id } = useParams();
-  const [invalid, setinvalid ]= useState('')
+  const [invalid, setinvalid] = useState("");
+  const [type,settype]= useState([])
 
   const [trainersData, settrainersData] = useState({
     image: [],
@@ -48,18 +50,32 @@ function EditTrainers() {
     email: "",
     description: "",
     status: "",
+    type: "",
   });
 
-  const fetchdata = useCallback(async () => {
 
+
+  const typeofplan = async()=>{
+    try{
+    const response = await axios.get("http://localhost:2000/adminroute/plantypeGet")
+    settype(response.data)
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+
+
+
+
+  const fetchdata = useCallback(async () => {
     const token = localStorage.getItem("token");
     axios.defaults.headers.common["Authorization"] = token;
     try {
       const response = await axios.get(`http://localhost:2000/adminroute/tarinersedit/${id}`);
       const data = response.data;
-      console.log(data);
-
       settrainersData(data);
+      setlist(data);
     } catch (err) {
       console.log(err);
     }
@@ -67,6 +83,7 @@ function EditTrainers() {
 
   useEffect(() => {
     fetchdata();
+    typeofplan();
   }, [fetchdata]);
 
   const handleUpdate = async (e) => {
@@ -81,8 +98,9 @@ function EditTrainers() {
       data.append("contact", trainersData.contact);
       data.append("description", trainersData.description);
       data.append("status", trainersData.status);
+      data.append("type", trainersData.type);
 
-      if (trainersData.image.length>0) {
+      if (trainersData.image.length > 0) {
         for (let i = 0; i < trainersData.image.length; i++) {
           data.append("image", trainersData.image[i]);
         }
@@ -97,16 +115,15 @@ function EditTrainers() {
           },
         }
       );
-      
+
       if (response.status === 200) {
-        console.log("updating trainers successfully");
         window.location.href = "/Trianers";
-        setinvalid('')
+        setinvalid("");
       }
-    } catch (err){
-     if(err.response.status === 400){
-      setinvalid("Email is already exist")
-     }
+    } catch (err) {
+      if (err.response.status === 400) {
+        setinvalid("Email is already exist");
+      }
       console.log(err, "error trainers data updating");
     }
   };
@@ -119,7 +136,6 @@ function EditTrainers() {
     });
   };
 
-
   const handleImageChange = (e) => {
     e.preventDefault();
     const file = Array.from(e.target.files);
@@ -129,8 +145,6 @@ function EditTrainers() {
     }));
   };
 
-
-
   return (
     <BasicLayout title="Edit and update" image={curved6} description="Edit trainers details">
       <Card>
@@ -138,13 +152,18 @@ function EditTrainers() {
         <SoftBox pt={2} pb={3} px={3}>
           <SoftBox component="form" role="form">
             <SoftBox mb={2}>
-              <input multiple  accept="image/*" type="file" placeholder="image" onChange={handleImageChange} />
+              <input
+                multiple
+                accept="image/*"
+                type="file"
+                placeholder="image"
+                onChange={handleImageChange}
+              />
             </SoftBox>
             <SoftBox mb={2}>
               <SoftInput
-            
                 type="text"
-                name="firstname" 
+                name="firstname"
                 placeholder="First-name"
                 value={trainersData.firstname}
                 onChange={handleChange}
@@ -153,7 +172,7 @@ function EditTrainers() {
             <SoftBox mb={2}>
               <SoftInput
                 type="text"
-                name="lastname" 
+                name="lastname"
                 placeholder="Last-name"
                 value={trainersData.lastname}
                 onChange={handleChange}
@@ -171,7 +190,7 @@ function EditTrainers() {
             <p style={{ fontSize: "10px", marginLeft: "1rem", color: "red" }}>{invalid}</p>
             <SoftBox mb={2}>
               <SoftInput
-                 name="contact"
+                name="contact"
                 type="tel"
                 placeholder="Contact"
                 value={trainersData.contact}
@@ -194,13 +213,18 @@ function EditTrainers() {
                 }}
               />
             </SoftBox>
-            <select  name="status" id="Active-Deactive" onChange={handleChange} >
-            <option value="Active">Active</option>
+
+            <select name="type" value={trainersData.type} id="Active-Deactive" onChange={handleChange}>
+              {type.map((item, index) => (
+                <option value={item._id} key={index}>{item.type}</option>
+              ))}
+            </select>
+
+            <select name="status" id="Active-Deactive" onChange={handleChange}>
+              <option value="Active">Active</option>
               <option value="Deactive">Deactive</option>
             </select>
-            <SoftBox>
-
-            </SoftBox>
+            <SoftBox></SoftBox>
             <SoftBox display="flex" alignItems="center"></SoftBox>
             <SoftBox mt={4} mb={1}>
               <SoftButton variant="gradient" color="dark" fullWidth onClick={handleUpdate}>

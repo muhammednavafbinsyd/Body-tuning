@@ -10,21 +10,19 @@ function view() {
   const { id } = useParams();
   const [list, setList] = useState([]);
   const [list2, setList2] = useState([]);
-  console.log("package", list);
+
   useEffect(() => {
     packageview(id);
     packageDetails(list.packageId);
   }, [id, list.packageId]);
 
-  console.log(id, "121212");
 
   const packageview = async (id) => {
     const token = localStorage.getItem("token");
     axios.defaults.headers.common["Authorization"] = token;
     try {
       const response = await axios.get(`http://localhost:2000/adminroute/pakageView/${id}`);
-
-      setList(response.data);
+      setList(response.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -82,7 +80,11 @@ function view() {
                 <h5>
                   PIN : <span style={{ fontSize: "medium" }}>{list.pin}</span>
                 </h5>
-                <p>Amount total paid : {list.totalpaid}</p>
+                {list.type === "subscribe" && <p>Amount total paid : {list.totalpaid}</p>}
+                {list.type === "upgrade" && <p>Total amount:{list.totalpaid}</p>}
+                {list.type === "upgrade" && (
+                  <p>Blance paid:{list.type === "upgrade" ? list.balanceAmount : ""}</p>
+                )}
               </Card.Text>
               {/* <Button variant="primary">Go somewhere</Button> */}
             </Card.Body>

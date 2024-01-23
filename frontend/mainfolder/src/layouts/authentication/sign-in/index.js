@@ -35,15 +35,14 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 // Images
 import curved9 from "assets/images/curved-images/white-curved.jpeg";
 import axios from "axios";
-import { Password, Style, WidthNormal } from "@mui/icons-material";
+
 
 function SignIn() {
-  const [rememberMe, setRememberMe] = useState(true);
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+
   const [input1, setinput1] = useState("");
   const [input2, setinput2] = useState("");
-  // const [error1,seterror1] = useState("");
-  // const [error2,seterror2] = useState("");
+
   const [invalid, setinvalid] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
@@ -66,12 +65,10 @@ function SignIn() {
           if (response.status === 200) {
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("adminprofile",JSON.stringify(response.data.admin));
-            console.log(response.data.admin);
-            console.log("hello world");
+        
           }
-          console.log(response.data);
+       
           window.location.href = "/dashboard";
-          console.log("Success");
         })
         .catch((err) => {
           console.log(err);

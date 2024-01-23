@@ -26,6 +26,8 @@ import { Label } from "@mui/icons-material";
 function Dietplan() {
   const [list, Setlist] = useState([]);
   const { id } = useParams();
+  const [ types, setTypes ] = useState([]);
+
   const navigate = useNavigate("");
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -44,10 +46,24 @@ function Dietplan() {
 
   useEffect(() => {
     getplan(id);
+    gettype();
   }, [id]);
 
   function removeHTMLTags(html) {
     return html.replace(/<[^>]*>/g, ""); // This regular expression matches any HTML tag and removes it.
+  }
+
+
+  const gettype = async()=>{
+    const token = localStorage.getItem("token");
+    axios.defaults.headers.common["Authorization"] = token;
+    try{
+      const response = await axios.get("http://localhost:2000/adminroute/plantypeGet")
+      setTypes(response.data);
+    }catch(err){
+      console.log(err);
+
+    }
   }
 
   const getplan = useCallback(async (id) => {
@@ -69,15 +85,13 @@ function Dietplan() {
   const handleDelete = async (itemid, id) => {
     try {
       await axios.delete(`http://localhost:2000/adminroute/deletedietplan/${itemid}`);
-      console.log(response.data);
-      // closeDeleteDialog();
       getplan();
     
     } catch (error) {
       console.log(error, "delete data plan");
     } finally {
       closeDeleteDialog();
-      window.location.href = `/dietplan/${id}`; // Close the delete dialog whether the deletion was successful or not
+      window.location.href = `/dietplan/${id}`; 
     }
   };
 
@@ -85,6 +99,14 @@ function Dietplan() {
     <SoftBox display="flex" flexDirection="column">
       <SoftTypography variant="caption" fontWeight="medium" color="text">
         {title}
+      </SoftTypography>
+    </SoftBox>
+  );
+
+  const Type = ({ type }) => (
+    <SoftBox display="flex" flexDirection="column">
+      <SoftTypography variant="caption" fontWeight="medium" color="text" style={{width:"3rem"}} >
+        {type}
       </SoftTypography>
     </SoftBox>
   );
@@ -117,6 +139,7 @@ function Dietplan() {
   return {
     columns: [
       { name: "title", align: "center" },
+      {name:"type",align:"center"},
 
       { name: "actions", align: "center" },
     ],
@@ -124,6 +147,7 @@ function Dietplan() {
       .filter((item) => item !== null) // Remove null items from the list
       .map((item) => ({
         title: <Title title={removeHTMLTags(item.title)} />,
+        type:<Type type={types.find(typename => typename._id === item.type)?. type}></Type>,
 
         actions: (
           <div >

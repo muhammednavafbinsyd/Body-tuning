@@ -4,51 +4,61 @@ import bannert from "../assets/img/hero-bg.jpg";
 import Footer from "./footer";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import userProfile from "./userProfile";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 import { Col, Row } from "react-bootstrap";
 function trainers() {
-  // const { id } = useParams();
   const [list, setList] = useState([]);
+  const [profile, setProfile] = useState([]);
+  const [cheking, setCheking] = useState([]);
   const [hide, setHide] = useState(false);
   const [show, setShow] = useState(false);
-  const [profile, setProfile] = useState("");
-
-  console.log("aaaaaaaaaaaa", list);
 
   useEffect(() => {
     getdata();
+    getProfile();
+    ChekingActiveAndExpired();
+  }, []);
 
-    const getDetails = JSON.parse(localStorage.getItem("userProfile")) || {};
+  const getProfile = () => {
+    const getDetails = JSON.parse(localStorage.getItem("appliedPackage")) || {};
     setProfile(getDetails);
 
-    if (localStorage.getItem("userProfile")) {
+    if (Object.keys(getDetails).length > 0) {
       setShow(true);
       setHide(false);
     } else {
-      setShow(false);
       setHide(true);
+      setShow(false);
     }
-  }, []);
+  };
+
+  const ChekingActiveAndExpired = async () => {
+    try {
+      const response = await axios.get("http://localhost:2000/userroute/foractiveorexpired");
+      setCheking(response.data.data);
+      if (response.data.status === "active" && Object.keys(profile).length > 0) {
+        setShow(true);
+        setHide(false);
+      } else if (response.data.status === "expired" && Object.keys(profile).length < 1) {
+        setShow(false);
+        setHide(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getdata = async () => {
     try {
       const response = await axios.get("http://localhost:2000/userroute/trainersget");
       setList(response.data);
-
-      console.log(response.data);
     } catch (err) {
       console.log(err, "error getting trainers");
     }
   };
-
-
-
-
   
+
   const stylerow = {
     marginTop: "10%",
   };
@@ -82,7 +92,7 @@ function trainers() {
                 <div className="col-lg-4 col-md-6  " style={stylerow} key={item._id}>
                   <div className="single-trainer-item">
                     <img
-                      style={{ height:"35rem"}}
+                      style={{ height: "35rem" }}
                       src={`http://localhost:2000/${item.image[1]}`}
                       alt
                     />
@@ -122,40 +132,32 @@ function trainers() {
                 <div className="col-lg-4 col-md-6 m-7" key={item._id}>
                   <div className="single-trainer-item">
                     <img
-                      style={{ maxWidth: "300px", maxHeight: "300px" }}
+                      style={{ height: "35rem" }}
                       src={`http://localhost:2000/${item.image[1]}`}
                       alt
                     />
                     <div className="trainer-text">
                       <h5>{item.firstname}</h5>
+
                       <span>{item.description}</span>
                       <br />
                       <Button
                         className="primary-btn signup-btn"
                         component={Link}
-                        to={"/signup"}
+                        to={"/subscribe"}
                         variant="contained"
                       >
-                        view more
+                        View more
                       </Button>
-                      {/* <div className="trainer-social">
-                        <a href="#">
-                          <i className="fa fa-facebook" />
-                        </a>
-                        <a href="#">
-                          <i className="fa fa-instagram" />
-                        </a>
-                        <a href="#">
-                          <i className="fa fa-twitter" />
-                        </a>
-                        <a href="#">
-                          <i className="fa fa-pinterest" />
-                        </a>
-                      </div> */}
                     </div>
                   </div>
                 </div>
               ))}
+              <div className="col-lg-8">
+                <h3 style={{ position: "relative", left: "20rem", top: "8rem" }}>
+                  Subscribe for view more trainers
+                </h3>
+              </div>
             </Row>
           </div>
         </section>

@@ -37,7 +37,6 @@ import { useParams } from "react-router-dom";
 
 function Editsubscriptiondata() {
   const { id } = useParams();
-  console.log(id);
 
   const [input1, setInput1] = useState("");
   const [input2, setInput2] = useState("");
@@ -80,7 +79,6 @@ function Editsubscriptiondata() {
       onetimeentrollmentfee: subsEdit.onetimeentrollmentfee,
       additionalbenefits: subsEdit.additionalbenefits,
     };
-    console.log(formData);
     // try {
     const token = localStorage.getItem("token");
     axios.defaults.headers.common["Authorization"] = token;
@@ -88,9 +86,7 @@ function Editsubscriptiondata() {
     axios
       .put(`http://localhost:2000/adminroute/subscriptionUpdate/${id}`, formData)
       .then((response) => {
-        console.log(response.data);
         if (response.status === 200) {
-          console.log("subscriptions  updated successfully");
           window.location.href = "/subscription";
         }
       })

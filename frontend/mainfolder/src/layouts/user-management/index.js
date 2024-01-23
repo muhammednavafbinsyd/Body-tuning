@@ -106,7 +106,6 @@ function Tables() {
         image: image,
       };
   
-      console.log(formData);
       axios
         .post("http://localhost:2000/adminroute/userPost", formData, {
           headers: {
@@ -114,7 +113,6 @@ function Tables() {
           },
         })
         .then((response) => {
-          console.log("data posted successfully", response.data);
           handleClose();
           window.location.href = "/users";
           setinvalid('');

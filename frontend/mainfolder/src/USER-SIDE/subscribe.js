@@ -20,19 +20,22 @@ function subscribe() {
   const [upgradelist, setupgradelist] = useState([]);
 
   const [packagelist, setpackagelist] = useState([]);
+  const [highestdurations,sethighestdurations] = useState();
+  
 
   const [onhide, setohide] = useState(true);
   const [onhide2, setonhide2] = useState(true);
+ 
 
   const [pid, setpid] = useState("");
+  const [pkid, setpkid] = useState("");
 
   const location = useLocation();
 
   const state = location.state;
 
-  console.log(upgradelist, "dfgs");
 
-  const [profile, setprofile] = useState("userProfile");
+
 
   const getinfo = JSON.parse(localStorage.getItem("userProfile")) || {};
   // setprofile(getinfo);
@@ -40,51 +43,62 @@ function subscribe() {
   useEffect(() => {
     if (state) {
       setohide(false);
-      setpid(state.pkid2);
-      console.log(state.pkid2, "000000000000000000000");
+      setpkid(state.pkid2);
+      setpid(state.pid);
+      
     } else {
       setonhide2(false);
-      // setpackagelist(null);
-      console.log("error");
+      setpkid(null);
+      setpid(null);
+      setpackagelist(null);
+  
     }
     subscribeList();
     subscribedusers(pid);
-  }, [pid]);
+  }, [pkid]);
 
   useEffect(() => {
     if (packagelist && upgradelist.length > 0) {
       const filteredList = upgradelist.filter((item) => {
         const packageDuration = parseInt(packagelist.duration);
         const listDuration = parseInt(item.duration);
-
+      
         return packageDuration < listDuration;
       });
       setupgradelist(filteredList, upgradelist);
     }
-  }, [packagelist]);
+    
+  },[packagelist]);
+
+  useEffect(() => {
+    if (upgradelist.length === 0) {
+      sethighestdurations("YOU ARE USING PREMIUM PACKAGE");
+    } else {
+      sethighestdurations("")
+    }
+  }, [upgradelist]);
+ 
 
   const subscribeList = async () => {
     try {
       const response = await axios.get("http://localhost:2000/userroute/subscribeList");
       setlist(response.data);
       setupgradelist(response.data);
+      
     } catch (error) {
       console.log(error);
     }
   };
 
   const subscribedusers = async (pid) => {
-    console.log("4444444444444", pid);
     try {
       const response = await axios.get(`http://localhost:2000/userroute/upgrade/${pid}`);
       setpackagelist(response.data);
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(state, "2212121212212121");
 
   function subscribe() {
     if (!localStorage.getItem("userProfile")) {
@@ -95,14 +109,16 @@ function subscribe() {
   const Upgrade = (pid) => {
     try {
       const state = {
-        id,
+        pkid,
         pid,
       };
-      navigate(`/subscribepackage/${pid}`, { state });
+      navigate(`/subscribepackage/${pid}`,{ state });
     } catch (error) {
       console.log(error);
     }
   };
+
+
 
   return (
     <div>
@@ -206,23 +222,9 @@ function subscribe() {
                       </div>
 
                       <div>
-                        {" "}
-                        {/* <Button
-                          className="primary-btn"
-                          component={Link}
-                          to={`/subscribepackage/${item._id}`}
-                          onClick={()=>Upgrade(pid)}
-                         >
-                          Upgrade
-                        </Button> */}
                         <Button
                           className="primary-btn"
-                          component={Link}
-                          to={{
-                            pathname: `/subscribepackage/${item._id}`,
-                            state: { pkid2: pid },
-                          }}
-                          onClick={() => Upgrade(pid)}
+                          onClick={() => Upgrade(item._id)}
                         >
                           Upgrade
                         </Button>
@@ -231,7 +233,9 @@ function subscribe() {
                   </Card>
                 </div>
               ))}
+              {highestdurations &&  <p style={{paddingLeft:"30rem"}}>{highestdurations}</p>}
             </div>
+          
           )}
         </div>
       </section>

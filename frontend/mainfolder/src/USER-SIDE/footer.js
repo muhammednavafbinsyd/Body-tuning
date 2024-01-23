@@ -1,7 +1,7 @@
 import React from "react";
 import Footer from "./footer";
 import FacebookIcon from "@mui/icons-material/Facebook";
-import { FaSquareXTwitter, FaInstagram, FaDribbble, } from "react-icons/fa6";
+import { FaSquareXTwitter, FaInstagram, FaDribbble } from "react-icons/fa6";
 import { BsSend } from "react-icons/bs";
 
 function footer() {
@@ -34,12 +34,6 @@ function footer() {
               <h4>Subscribe To Our Mailing List</h4>
               <p>Sign up to receive the latest information </p>
             </div>
-            <form action="#" className="subscribe-form">
-              <input type="text" placeholder="Enter Your Mail" />
-              <button type="submit">
-                <BsSend />
-              </button>
-            </form>
           </div>
           <div className="copyright-text">
             <ul>
@@ -52,10 +46,8 @@ function footer() {
             </ul>
             <p>©</p>
             <p>
-              {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
-              Copyright © All rights reserved | This template is made with{" "}
+              Copyright © All rights reserved | Developed by Fortran
               <i className="fa fa-heart" aria-hidden="true" />
-              {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
             </p>
             <p />
             <div className="footer-social">

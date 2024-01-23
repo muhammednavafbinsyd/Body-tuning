@@ -79,9 +79,10 @@ export default function App() {
     pathname ==="/subscribe" ||
     pathname .search("/subscribepackage") > -1 ||
     pathname ===("/mysubscription") ||
-    pathname .search("/membershipview") > -1
-    
-  
+    pathname .search("/membershipview") > -1 ||
+    pathname .search("/workoutview") > -1  ||
+    pathname .search("/dietview") > -1  ||
+    pathname .search("/blogview") > -1 
   ) {
     template = "Front";
   } else {
@@ -159,9 +160,9 @@ export default function App() {
       sx={{ cursor: "pointer" }}
       onClick={handleConfiguratorOpen}
     >
-      <Icon fontSize="default" color="inherit">
+      {/* <Icon fontSize="default" color="inherit">
         settings
-      </Icon>
+      </Icon> */}
     </SoftBox>
   );
 

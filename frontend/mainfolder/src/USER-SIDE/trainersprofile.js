@@ -6,11 +6,22 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import axios from "axios";
 import "../assets/usercss/style.css";
-import { useParams } from "react-router-dom";
-import { NavItem } from "react-bootstrap";
+import { useParams, useNavigate } from "react-router-dom";
+import { Col, NavItem } from "react-bootstrap";
+import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
+import Card from "react-bootstrap/Card";
+import { Row } from "react-bootstrap";
+import { Margin } from "@mui/icons-material";
 
 function Trainersprofile() {
   const { id } = useParams();
+
+  const navigate = useNavigate();
+
+  const [profile, setprofile] = useState();
+  const [list, Setlist] = useState([]);
+  const [list2, Setlist2] = useState([]);
 
   const [data, setdata] = useState({
     image: [],
@@ -18,77 +29,82 @@ function Trainersprofile() {
     lastname: "",
     email: "",
     description: "",
+    trainerId: "",
   });
 
-  const [workoutdata, setworkoutdata] = useState([
-    {
-      title: "",
-      day1: "",
-      day2: "",
-      day3: "",
-      day4: "",
-      day5: "",
-      day6: "",
-      day7: "",
-    },
-  ]);
-
-  const [dietdata, setdietdata] = useState([
-    {
-      title: "",
-      day1: "",
-      day2: "",
-      day3: "",
-      day4: "",
-      day5: "",
-      day6: "",
-      day7: "",
-    },
-  ]);
+  // const tid = id;
 
   useEffect(() => {
     getprofile(id);
-    getworkoutplan(id);
-    getdietplan(id);
+    getuserpackage();
+    getplan(id);
+    getplan2(id);
   }, [id]);
-
-  // const getworkoutplan = (id) =>{
-  //   try{
-  //   const response = await axios.get(`http://localhost:2000/userroute/workoutplanget/${id}`);    console.log(response.data);
-  //     setworkoutdata(response.data);
-  //   }catch(err){
-  //   console.log(err,"cannot get workoutplan ")
-  //   }
-  // }
-
-  const getworkoutplan = async (id) => {
-    try {
-      const response = await axios.get(`http://localhost:2000/userroute/workoutplanget/${id}`);
-      console.log("11111111111111", response.data);
-      setworkoutdata(response.data);
-    } catch (err) {
-      console.log(err, "cannot get workoutplan ");
-    }
-  };
-
-  const getdietplan = async (id) => {
-    try {
-      const response = await axios.get(`http://localhost:2000/userroute/dietplanget/${id}`);
-      console.log(response.data);
-      setdietdata(response.data);
-    } catch (err) {
-      console.log(err, "cannot get dietplan ");
-    }
-  };
 
   const getprofile = async (id) => {
     try {
       const response = await axios.get(`http://localhost:2000/userroute/tarinersedit/${id}`);
-      console.log(response.data);
       setdata(response.data);
     } catch (err) {
       console.log(err, "cannot get ");
     }
+  };
+
+  const getplan = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:2000/userroute/trainerworkoutplan/${id}`);
+      const data = await response.data;
+
+      if (Array.isArray(data)) {
+        Setlist(data);
+      } else {
+        Setlist([data]);
+      }
+    } catch (error) {
+      console.log(error, "get data err plan");
+    }
+  };
+
+  const getplan2 = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:2000/userroute/trainerdietplan/${id}`);
+      const data = await response.data;
+      if (Array.isArray(data)) {
+        Setlist2(data);
+      } else {
+        Setlist2([data]);
+      }
+    } catch (error) {
+      console.log(error, "get data err plan");
+    }
+  };
+
+  // console.log(list, "111");
+
+  // const planview = () => {
+  //   try {
+  //     const state = {
+  //       tid,
+  //     };
+  //     navigate(`/workoutview/${tid}`, { state });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
+  // const planview2 = () => {
+  //   try {
+  //     const state = {
+  //       tid,
+  //     };
+  //     navigate(`/dietview/${tid}`, { state });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+  const getuserpackage = () => {
+    const getDetails = JSON.parse(localStorage.getItem("appliedPackage")) || {};
+    setprofile(getDetails);
   };
 
   return (
@@ -103,10 +119,6 @@ function Trainersprofile() {
             <div className="col-lg-12">
               <div className="breadcrumb-text">
                 <h2>Profile</h2>
-                {/* <div className="breadcrumb-option">
-              <a href="./index.html"><i className="fa fa-home" /> Home</a>
-              <span>Gallery</span>
-            </div> */}
               </div>
             </div>
           </div>
@@ -122,41 +134,63 @@ function Trainersprofile() {
                   <h2>{data.firstname}</h2>
                   <p>{data.description}</p>
                   <p>{data.email}</p>
+                  <p></p>
                 </div>
                 <img className="prof-file-img" src={`http://localhost:2000/${data.image[0]}`}></img>
               </div>
             </Tab>
             <Tab eventKey="home" title="Workout plan">
-              Tab content for Home
-              {workoutdata.map((item, index) => (
-                <div key={index}>
-                  <div
-                    dangerouslySetInnerHTML={{ __html: item.title.replace(/<img[^>]*>/g, "") }}
-                  ></div>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: `<style>li {list-style-type: none; }</style>${item.day1}`,
-                    }}
-                  ></div>
-                  <p>{workoutdata.title}</p>
-                </div>
-              ))}
+              {profile && Object.keys(profile).length > 0 ? (
+                <>
+                <Row>
+                  {list.map((item, index) => (
+                    <Col key={index}>
+                    <Card style={{ width: "18rem" }} >
+                      <Card.Body>
+                        <Card.Title>
+                          <div dangerouslySetInnerHTML={{ __html: item.title }} />
+                        </Card.Title>
+                        <Card.Text></Card.Text>
+                        {/* <Button onClick={planview}>VIEW</Button> */}
+                        <Button component={Link} to={`/workoutview/${item._id}`}>
+                          VIEW
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                    </Col>
+                  ))}
+                  </Row>
+                </>
+              ) : (
+                <p>Subscribe for view more details</p>
+              )}
             </Tab>
             <Tab eventKey="contact" title="Diet plan">
-              Tab content for Contact
-              {dietdata.map((item, index) => (
-                <div key={index}>
-                  <div
-                    dangerouslySetInnerHTML={{ __html: item.title.replace(/<img[^>]*>/g, "") }}
-                  ></div>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: `<style>li { list-style-type: none; }</style>${item.day1}`,
-                    }}
-                  ></div>
-                  <p>{workoutdata.title}</p>
-                </div>
-              ))}
+              {profile && Object.keys(profile).length > 0 ? (
+                <>
+                <Row>
+                  
+                  {list2.map((item, index) => (
+                    <Col  key={index} >
+                    <Card style={{ width: "18rem" }}>
+                      <Card.Body>
+                        <Card.Title>
+                          <div dangerouslySetInnerHTML={{ __html: item.title }} />
+                        </Card.Title>
+                        <Card.Text></Card.Text>
+                        {/* <Button onClick={planview}>VIEW</Button> */}
+                        <Button component={Link} to={`/dietview/${item._id}`}>
+                          VIEW
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                    </Col>
+                  ))}
+                  </Row>
+                </>
+              ) : (
+                <p>Subscribe for view more details</p>
+              )}
             </Tab>
           </Tabs>
         </div>

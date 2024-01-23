@@ -23,8 +23,49 @@ import SoftTypography from "components/SoftTypography";
 
 // Soft UI Dashboard React examples
 import TimelineItem from "examples/Timeline/TimelineItem";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function OrdersOverview() {
+  const [datalist, setdatalist] = useState([])
+  const [membershipdata, setmembershipdata] = useState([])
+
+
+
+  useEffect(() => {
+    const fetchDatalatestsix = async () => {
+      try {
+        const response = await axios.get("http://localhost:2000/adminroute/latestsixsubscribers");
+        setdatalist(response.data.data);
+      } catch (err) {
+        console.log(err, "Error getting");
+      }
+    };
+
+    const fetchsubscription = async () => {
+      const token = localStorage.getItem("token");
+      axios.defaults.headers.common["Authorization"] = token;
+      try {
+        const response = await axios.get("http://localhost:2000/adminroute/getSubscription");
+        setmembershipdata(response.data);
+        console.log(response.data, "4848");
+      } catch (err) {
+        console.log(err, "Error getting");
+      }
+    };
+
+    fetchsubscription();
+    fetchDatalatestsix();
+  }, []);
+  
+
+  const getMembershipTypeByPackageId = (packageId) => {
+    const subscription = membershipdata.find((item) => item._id === packageId);
+    return subscription ? subscription.membershiptype || "Unknown" : "Unknown";
+
+  };
+
+
   return (
     <Card className="h-100">
       <SoftBox pt={3} px={3}>
@@ -47,37 +88,26 @@ function OrdersOverview() {
         </SoftBox>
       </SoftBox>
       <SoftBox p={2}>
-        <TimelineItem
-          color="success"
-          icon="notifications"
-          title="$2400, Design changes"
-          dateTime="22 DEC 7:20 PM"
-        />
-        <TimelineItem
-          color="error"
-          icon="inventory_2"
-          title="New order #1832412"
-          dateTime="21 DEC 11 PM"
-        />
-        <TimelineItem
-          color="info"
-          icon="shopping_cart"
-          title="Server payments for April"
-          dateTime="21 DEC 9:34 PM"
-        />
-        <TimelineItem
-          color="warning"
-          icon="payment"
-          title="New card added for order #4395133"
-          dateTime="20 DEC 2:20 AM"
-        />
-        <TimelineItem
-          color="primary"
-          icon="vpn_key"
-          title="New card added for order #4395133"
-          dateTime="18 DEC 4:54 AM"
-        />
-        <TimelineItem color="dark" icon="paid" title="New order #9583120" dateTime="17 DEC" />
+        {datalist.map((item, index) => {
+          const createdAtDate = new Date(item.createdAt);
+
+          const date = createdAtDate.getDate();
+          const monthName = new Intl.DateTimeFormat("en-US", { month: "long" }).format(
+            createdAtDate
+          );
+          const Time = createdAtDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+          const dateTimeString = `${date} ${monthName} ${Time}`;
+
+          return (
+            <TimelineItem
+              key={index}
+              color="success"
+              title={`${item.username} subscribed is ${getMembershipTypeByPackageId(item.packageId)}`}              dateTime={dateTimeString}
+              
+            />
+            
+          );
+        })}
       </SoftBox>
     </Card>
   );

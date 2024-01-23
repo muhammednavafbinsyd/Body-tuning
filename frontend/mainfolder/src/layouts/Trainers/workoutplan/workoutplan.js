@@ -26,6 +26,8 @@ import { Label } from "@mui/icons-material";
 function Workoutplan() {
   const [list, Setlist] = useState([]);
   const { id } = useParams();
+  const [ types, setTypes ] = useState([]);
+
   const navigate = useNavigate("");
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -44,10 +46,25 @@ function Workoutplan() {
 
   useEffect(() => {
     getplan(id);
+    gettype();
   }, [id]);
 
   function removeHTMLTags(html) {
     return html.replace(/<[^>]*>/g, ""); // This regular expression matches any HTML tag and removes it.
+  }
+
+
+  const gettype = async()=>{
+    const token = localStorage.getItem("token");
+    axios.defaults.headers.common["Authorization"] = token;
+    try{
+      const response = await axios.get("http://localhost:2000/adminroute/plantypeGet")
+      setTypes(response.data);
+      console.log(response.data,"[][][][][][][]");
+    }catch(err){
+      console.log(err);
+
+    }
   }
 
   const getplan = useCallback(async (id) => {
@@ -88,6 +105,13 @@ function Workoutplan() {
       </SoftTypography>
     </SoftBox>
   );
+  const Type = ({ type }) => (
+    <SoftBox display="flex" flexDirection="column">
+      <SoftTypography variant="caption" fontWeight="medium" color="text" style={{width:"3rem"}} >
+        {type}
+      </SoftTypography>
+    </SoftBox>
+  );
 
   const handleOpenDialog = (id) => {
     setOpenDialog(true)
@@ -117,14 +141,14 @@ function Workoutplan() {
   return {
     columns: [
       { name: "title", align: "center" },
-
+      {name:"type",align:"center"},
       { name: "actions", align: "center" },
     ],
     rows: list
       .filter((item) => item !== null) // Remove null items from the list
       .map((item) => ({
         title: <Title title={removeHTMLTags(item.title)} />,
-
+        type:<Type type={types.find(typename => typename._id === item.type)?. type}></Type>,
         actions: (
           <div >
             <Button onClick={() => handleOpenDialog(item._id)}>View</Button>

@@ -152,7 +152,7 @@ function about() {
       </section>
       {/* Banner Section End */}
       {/* Trainer Section Begin */}
-      <section className="trainer-section about-trainer spad">
+      {/* <section className="trainer-section about-trainer spad">
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
@@ -245,7 +245,7 @@ function about() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       <Footer />
       {/* Footer Section End */}
       {/* Js Plugins */}

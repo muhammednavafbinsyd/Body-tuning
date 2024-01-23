@@ -13,13 +13,13 @@ function Membershipview() {
   const [list, setlist] = useState([]);
   const [packagelist, setpackagelist] = useState([]);
 
-  console.log(list, "nawafwww");
 
   const view = async () => {
     try {
       const response = await axios.get(`http://localhost:2000/userroute/renewdata/${id}`);
-      console.log(response.data);
+
       setlist(response.data);
+
     } catch (err) {
       console.log(err);
     }
@@ -59,38 +59,40 @@ function Membershipview() {
           style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
         >
           <div className="row">
-          <Card style={{height:'18rem', width: "20rem",marginRight:"5rem" }}>
-            <Card.Body style={{}}>
-              <Card.Title>
-                {" "}
-                {packagelist.find((listItem) => listItem._id === list.packageId)?.membershiptype}
-              </Card.Title>
-              <Card.Text>
-              <h3>duration:{list.duration}Months</h3>
-                <h3>Monthlyfee:{list.monthlyfee}</h3>
-                <h3>OTEF:{list.onetimeentrollmentfee}</h3>
-                  
-              </Card.Text>
-            </Card.Body>
-          </Card>
-          <Card style={{ width: "25rem" }}>
-            <Card.Body style={{}}>
-              <Card.Title>
-              Billing Address
-              </Card.Title>
-              <Card.Text>
-                <h5>Name:&nbsp;{list.username}</h5>
-                <h5>Email:&nbsp;{list.email}</h5>
-                <h5>Contact:&nbsp;{list.phonenumber}</h5>
-                <h5>Location:&nbsp;{list.location}</h5>
-                <h5>PIN:&nbsp;{list.pin}</h5>
-                <h5>Country:&nbsp;{list.country}</h5>
-                <br/>
-                <p>Total paid:&nbsp;{list.totalpaid}</p>
-                <p>Package untill:&nbsp;{new Date(list.expiry_date).toLocaleDateString()}</p>
-              </Card.Text>
-            </Card.Body>
-          </Card>
+            <Card style={{ height: "18rem", width: "20rem", marginRight: "5rem" }}>
+              <Card.Body style={{}}>
+                <Card.Title>
+                  {" "}
+                  {packagelist.find((listItem) => listItem._id === list.packageId)?.membershiptype}
+                </Card.Title>
+                <Card.Text>
+                  <h3>duration:{list.duration}Months</h3>
+                  <h3>Monthlyfee:{list.monthlyfee}</h3>
+                  <h3>OTEF:{list.onetimeentrollmentfee}</h3>
+                </Card.Text>
+              </Card.Body>
+            </Card>
+            <Card style={{ width: "25rem" }}>
+              <Card.Body style={{}}>
+                <Card.Title>Billing Address</Card.Title>
+                <Card.Text>
+                  <h5>Name:&nbsp;{list.username}</h5>
+                  <h5>Email:&nbsp;{list.email}</h5>
+                  <h5>Contact:&nbsp;{list.phonenumber}</h5>
+                  <h5>Location:&nbsp;{list.location}</h5>
+                  <h5>PIN:&nbsp;{list.pin}</h5>
+                  <h5>Country:&nbsp;{list.country}</h5>
+                  <br />
+                  {list.type === "subscribe" && <p>Total paid: &nbsp; {list.totalpaid}</p>}
+                  {list.type === "upgrade" && <p>Total amount: &nbsp; {list.totalpaid} </p>}
+                  {list.type === "upgrade" && (
+                    <p>Balance paid:&nbsp;{list.type === "upgrade" ? list.balanceAmount : ""}</p>
+                  )}
+
+                  <p>Package untill:&nbsp;{new Date(list.expiry_date).toLocaleDateString()}</p>
+                </Card.Text>
+              </Card.Body>
+            </Card>
           </div>
         </div>
       </section>

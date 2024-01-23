@@ -141,7 +141,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
     </Menu>
   );
  const logout = () => {
-  localStorage.clear();
+  localStorage.removeItem("token" ) ;
+  localStorage.removeItem("adminprofile");
   window.location.href='/authentication/sign-in'
  }
   return (
@@ -182,11 +183,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     color={light ? "white" : "dark"}
                     onClick={logout}
                   >
-                    Log Out
+                    Log out
                   </SoftTypography>
                 </IconButton>
               </Link>
-              <IconButton
+              {/* <IconButton
                 size="small"
                 color="inherit"
                 sx={navbarMobileMenu}
@@ -195,16 +196,16 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 <Icon className={light ? "text-white" : "text-dark"}>
                   {miniSidenav ? "menu_open" : "menu"}
                 </Icon>
-              </IconButton>
-              <IconButton
+              </IconButton> */}
+              {/* <IconButton
                 size="small"
                 color="inherit"
                 sx={navbarIconButton}
                 onClick={handleConfiguratorOpen}
               >
                 <Icon>settings</Icon>
-              </IconButton>
-              <IconButton
+              </IconButton> */}
+              {/* <IconButton
                 size="small"
                 color="inherit"
                 sx={navbarIconButton}
@@ -214,7 +215,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 onClick={handleOpenMenu}
               >
                 <Icon className={light ? "text-white" : "text-dark"}>notifications</Icon>
-              </IconButton>
+              </IconButton> */}
               {renderMenu()}
             </SoftBox>
           </SoftBox>

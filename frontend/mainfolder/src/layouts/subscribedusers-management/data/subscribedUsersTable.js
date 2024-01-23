@@ -13,14 +13,13 @@ function subscribedUsersTable() {
     subscribedUsers();
   }, []);
 
-  console.log(list);
 
   const subscribedUsers = async () => {
     const token = localStorage.getItem("token");
     axios.defaults.headers.common["Authorization"] = token;
     try {
       const response = await axios.get("http://localhost:2000/adminroute/Subscribedusers");
-      setList(response.data);
+      setList(response.data.subscribedList);
     } catch (err) {
       console.log(err);
       if (!localStorage.getItem("token")) {
@@ -99,9 +98,31 @@ function subscribedUsersTable() {
       </SoftTypography>
     </SoftBox>
   );
+  const Status = ({ status }) => (
+    <SoftBox display="flex" flexDirection="column">
+      <SoftTypography variant="caption" fontWeight="medium" color="text">
+        {status}
+      </SoftTypography>
+    </SoftBox>
+  );
+  const Type = ({ type }) => (
+    <SoftBox display="flex" flexDirection="column">
+      <SoftTypography variant="caption" fontWeight="medium" color="text">
+        {type}
+      </SoftTypography>
+    </SoftBox>
+  );
+  const NO = ({ no }) => (
+    <SoftBox display="flex" flexDirection="column">
+      <SoftTypography variant="caption" fontWeight="medium" color="text">
+        {no}
+      </SoftTypography>
+    </SoftBox>
+  );
 
   return {
     columns: [
+      {name: "no", align:"center",},
       { name: "name", align: "center" },
       { name: "contact", align: "center" },
       { name: "email", align: "center" },
@@ -112,10 +133,13 @@ function subscribedUsersTable() {
       { name: "monthlyfee", align: "center" },
       { name: "otef", align: "center" },
       { name: "totalpaid", align: "center" },
+      {name: "status", align: "center" },
+      {name:"type", align: "center" },
       { name: "view", align: "center" },
     ],
 
-    rows: list.map((item) => ({
+    rows: list.map((item,index) => ({
+      no: <NO key={index} no={index+1}></NO>,
       name: <Name name={item.username}></Name>,
       contact: <Contact contact={item.phonenumber}></Contact>,
       email: <Email email={item.email}></Email>,
@@ -125,7 +149,9 @@ function subscribedUsersTable() {
       duration: <Duration duration={item.duration}></Duration>,
       monthlyfee: <Monthlyfee monthlyfee={item.monthlyfee}></Monthlyfee>,
       otef: <OTEF otef={item.onetimeentrollmentfee}></OTEF>,
-      totalpaid: <Totalpaid totalpaid={item.totalpaid}></Totalpaid>,
+      totalpaid: <Totalpaid totalpaid={item.type === "upgrade" ? item.balanceAmount : item.totalpaid} ></Totalpaid>,
+      status:<Status status={item.status}></Status>,
+      type: <Type type={item.type}></Type>,
       view: <SoftButton
       color="primary"
       fontWeight="medium"

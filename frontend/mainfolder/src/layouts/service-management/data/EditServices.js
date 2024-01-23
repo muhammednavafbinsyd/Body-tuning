@@ -36,7 +36,6 @@ import { useParams } from "react-router-dom";
 
 function Editservices() {
   const { id } = useParams();
-  console.log(id);
   const [input1, setInput1] = useState("");
   const [input2, setInput2] = useState("");
   const [input3, setInput3] = useState("");
@@ -97,7 +96,6 @@ function Editservices() {
   
 
 if(validationErrors.length === 0){
-    console.log(serviceEdit.description);
 
   try {
     var formData = new FormData();
@@ -106,9 +104,7 @@ if(validationErrors.length === 0){
     if (serviceEdit.image) {
         formData.append("image",serviceEdit.image);
       }
-      console.log(formData);
-    console.log(serviceEdit.image);
-    console.log("444444444", serviceEdit.description);
+
     
     const response = await axios.put(
       `http://localhost:2000/adminroute/serviceUpdate/${id}`,
@@ -120,10 +116,8 @@ if(validationErrors.length === 0){
       }
     );
 
-    console.log(response.data);
     alert("success")
     if (response.status === 200) {
-      console.log("services updated successfully");
       window.location.href = "/services";
     }
   } catch (err) {

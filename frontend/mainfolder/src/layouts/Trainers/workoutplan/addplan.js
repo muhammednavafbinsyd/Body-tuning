@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect } from "react";
 import axios from "axios";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 // import ReactQuill from "react-quill";
@@ -18,6 +18,7 @@ import { Col, Row } from "react-bootstrap";
 function Addplan() {
   const quillRef = React.useRef();
   const { id } = useParams();
+  const [types,settypes]= useState();
   const [day1, setDay1] = useState("");
   const [day2, setDay2] = useState("");
   const [day3, setDay3] = useState("");
@@ -27,13 +28,13 @@ function Addplan() {
   const [day7, setDay7] = useState("");
   const [title, setTitle] = useState("");
 
-  console.log(id);
 
   const handlesubmit = async (e) => {
     e.preventDefault();
 
     const formData = {
       trainerId: id,
+      type: types,
       title: title,
       day1: day1,
       day2: day2,
@@ -44,46 +45,20 @@ function Addplan() {
       day7: day7,
     };
 
-    // const formData = new FormData();
-    // formData.append("trainerId",id);
-    // formData.append("title",title);
-    // formData.append("day1",day1);
-    // formData.append("day2",day2);
-    // formData.append("day3",day3);
-    // formData.append("day4",day4);
-    // formData.append("day5",day5);
-    // formData.append("day6",day6);
-    // formData.append("day7",day7);
-
-    // Loop through and append each day content
-    // for (let i = 1; i <= 7; i++) {
-    //   const dayContent = eval(`day${i}`);
-    //   formData.append(`day${i}`, dayContent);
-    // }
+    
     try {
-      // Use axios.post with the FormData object
       const response = await axios.post("http://localhost:2000/adminroute/workoutpost",formData, {
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        // },
+      
       });
 
-      console.log("Data posted successfully", response.data);
       window.location.href = `/workoutplan/${id}`;
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  // const containerStyle = {
-  //   display: "flex",
-  //   justifyContent: "space-around",
-  //   marginLeft: "10rem",
-  //  width: "300px",
-  //  height: "500px",
-  //  backgroundColor:"red"
+  
 
-  // };
   const quillStyle = {
     display: "block",
     justifyContent: "space-evenly",
@@ -114,7 +89,6 @@ function Addplan() {
     input.setAttribute("accept", "image/*");
     input.onchange = (event) => {
       // Handle file selection here
-      console.log(URL.createObjectURL(event.target.files[0]));
       return URL.createObjectURL(event.target.files[0]);
     };
     input.click();
@@ -175,10 +149,36 @@ function Addplan() {
     images_upload_handler: example_image_upload_handlertyne,
     images_upload_base_path: "http://localhost:2000/",
   };
+  const [type,settype] = useState([]);
+
+
+
+  
+  const typeofplan = async () => {
+    const token = localStorage.getItem("token");
+    axios.defaults.headers.common["Authorization"] = token;
+    try {
+      const response = await axios.get("http://localhost:2000/adminroute/plantypeGet");
+      settype(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    typeofplan();
+  }, []);
 
   return (
     <BasicLayout>
       <Row>
+      <select name="type" onChange={(e) => settypes(e.target.value)}>
+                {type.map((item, index) => (
+                  <option value={item._id} key={index}>
+                    {item.type}
+                  </option>
+                ))}
+              </select>
         <Col>
           <SoftBox mb={6}>
             <label>Title</label>

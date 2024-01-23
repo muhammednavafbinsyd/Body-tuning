@@ -20,7 +20,6 @@ import App from "App";
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Soft UI Dashboard React Context Provider
 import { SoftUIControllerProvider } from "context";
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>

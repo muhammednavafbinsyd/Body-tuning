@@ -97,7 +97,6 @@ function TestimonialEdit() {
     }
 
     if (validationErrors.length === 0) {
-      console.log(testimonial,"nawaf")
       try {
         var data = new FormData();
         data.append("title", testimonial.title);
@@ -105,7 +104,6 @@ function TestimonialEdit() {
         if (testimonial.image) {
           data.append("image",testimonial.image);
         }
-        console.log(data);
         const response = await axios.put(
           `http://localhost:2000/adminroute/testimonialUpdate/${id}`,
           data,

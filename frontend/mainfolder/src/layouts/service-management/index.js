@@ -65,7 +65,6 @@ function Tables() {
           },
         })
         .then((response) => {
-          console.log(response.data, "services postes successfully");
           window.location.href = "/services";
           handleClose();
 

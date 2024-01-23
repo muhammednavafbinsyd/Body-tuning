@@ -16,7 +16,6 @@ function contact() {
   const [input2, setInput2] = useState("");
   const [input3, setInput3] = useState("");
 
-  const [ invalid , setInvalid] = useState("");
 
   const Messesge = async (e) => {
     e.preventDefault();
@@ -45,13 +44,10 @@ function contact() {
         };
         axios.post("http://localhost:2000/adminroute/sendmsg",Sendmsg)
         .then((response) => {
-          console.log(response);
-          alert("success!");
         })
         .catch((error) => {
           console.log(error);
           if(error.response.status === 400){
-            setInput2("Invalid email")
 
           }
         })

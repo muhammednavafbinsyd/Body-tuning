@@ -34,8 +34,7 @@ function otpverification() {
         .post("http://localhost:2000/userroute/verifyotp",{otp})
         .then((response) => {
           if (response.status === 200) {
-            console.log(response.data.success);
-            console.log("Success");
+
             alert("Verified");
             window.location.href = "/passwordset";
           }
@@ -54,7 +53,6 @@ function otpverification() {
       .post("http://localhost:2000/userroute/sendotp",{email})
       .then((response) => {
         if (response.status === 200) {
-          console.log(response.data.success);
           alert("OTP Resent");
           setCountdown(30);
         }

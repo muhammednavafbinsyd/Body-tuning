@@ -13,8 +13,14 @@ import { Link } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import { Switch } from "@mui/material";
 
-function Trainers({ data }) {
+function Trainers({ plantype }) {
+  
+  
+  const [selectedPlantypes, setSelectedPlantypes] = useState('');
+// plantypes: selectedPlantypes
+  
   const [list, setList] = useState([]);
+  const [ types, setTypes ] = useState([]);
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState(null);
@@ -24,7 +30,7 @@ function Trainers({ data }) {
     setShowDeleteDialog(true);
   };
 
-  const closeDeleteDialog = () => {
+  const closeDeleteDialog = () =>{
     setShowDeleteDialog(false);
   };
 
@@ -40,19 +46,34 @@ function Trainers({ data }) {
 
 
   useEffect(() => {
-    getdata();
-  }, []);
+    getdata(plantype);
+    gettype();
+  },[plantype]);
 
-  const getdata = async () => {
+
+
+  const getdata = async (plantypes) => {
     const token = localStorage.getItem("token");
     axios.defaults.headers.common["Authorization"] = token;
     try {
-      const response = await axios.get("http://localhost:2000/adminroute/trainersget");
+      const response = await axios.get(`http://localhost:2000/adminroute/trainersget?plantypes=${plantype}`);
       setList(response.data);
     } catch (err) {
       console.log(err, "error getting trainers");
     }
   };
+
+  const gettype = async()=>{
+    const token = localStorage.getItem("token");
+    axios.defaults.headers.common["Authorization"] = token;
+    try{
+      const response = await axios.get("http://localhost:2000/adminroute/plantypeGet")
+      setTypes(response.data);
+    }catch(err){
+      console.log(err);
+
+    }
+  }
 
 
   // status...........
@@ -108,8 +129,15 @@ function Trainers({ data }) {
   );
   const Description = ({ description }) => (
     <SoftBox display="flex" flexDirection="column">
-      <SoftTypography variant="caption" fontWeight="medium" color="text" style={{width:"30rem"}} >
+      <SoftTypography variant="caption" fontWeight="medium" color="text" style={{width:"28rem"}} >
         {description}
+      </SoftTypography>
+    </SoftBox>
+  );
+  const Type = ({ type }) => (
+    <SoftBox display="flex" flexDirection="column">
+      <SoftTypography variant="caption" fontWeight="medium" color="text" style={{width:"3rem"}} >
+        {type}
       </SoftTypography>
     </SoftBox>
   );
@@ -120,20 +148,23 @@ function Trainers({ data }) {
       { name: "email&contact", align: "left" },
       { name: "description", align: "center" },
       { name: "status", align: "center" },
+      {name:"type",align:"center"},
       { name: "actions", align: "center" },
     ],
     rows: list.map((item) => ({
       name: <Author image={`http://localhost:2000/${item.image[0]}`} name={item.firstname} />,
       "email&contact": <Emailinfo email={item.email} contact={item.contact} />,
       description: <Description  description={item.description} />,
+      type:<Type type={types.find(typename => typename._id === item.type)?. type}></Type>,
       status: (
         <div>
           <Switch checked={item.status === "Active"} onChange={() => toggleStatus(item._id)} />
         </div>
       ),
+      
 
       actions: (
-        <div>
+        <div  >
           <SoftButton
             color="primary"
             fontWeight="medium"
